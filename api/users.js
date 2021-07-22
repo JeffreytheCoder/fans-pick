@@ -47,7 +47,7 @@ router.post(
         { forceHttps: true }
       );
 
-      let user = new User({
+      user = new User({
         name,
         email,
         avatar,
@@ -82,11 +82,11 @@ router.post(
   }
 );
 
-// @route    GET api/user/login
+// @route    POST api/users/login
 // @desc     authenticate user & get token
 // @access   Public
 router.post(
-  '/',
+  '/login',
   check('email', 'Please include a valid email').isEmail(),
   check(
     'password',
@@ -134,5 +134,24 @@ router.post(
     }
   }
 );
+
+// @route    GET api/users/:user_id
+// @desc     get a user
+// @access   Public
+router.get('/:user_id', async (req, res) => {
+  try {
+    // check if the user exists
+    let user = await User.findById(req.params.user_id).select('-password');
+    if (!user) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: 'User does not exist' }] });
+    }
+    res.json({ user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+})
 
 module.exports = router;
