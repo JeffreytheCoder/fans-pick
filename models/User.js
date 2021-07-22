@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -17,6 +18,14 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String
   },
+  pages: [
+    {
+      page: {
+        type: Schema.Types.ObjectId,
+        ref: 'pages',
+      }
+    }
+  ],
   date: {
     type: Date,
     default: Date.now
