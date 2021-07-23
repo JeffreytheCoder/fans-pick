@@ -6,9 +6,9 @@ const PostSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'user',
   },
-  profile: {
+  page: {
     type: Schema.Types.ObjectId,
-    ref: 'profile',
+    ref: 'page',
   },
   username: {
     type: String,
@@ -44,6 +44,10 @@ const PostSchema = new mongoose.Schema({
   superPost: {
     type: Schema.Types.ObjectId,
     ref: 'post'
+  },
+  adopted: {
+    type: Boolean,
+    default: false
   },
   date: {
     type: Date,

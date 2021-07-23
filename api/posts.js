@@ -155,4 +155,38 @@ router.delete('/:post_id', auth, async (req, res) => {
   }
 });
 
+// @route    PUT api/posts/adopt/:post_id
+// @desc     adopt a post
+// @access   Private
+router.put('/adopt/:post_id', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.post_id);
+
+    // check if the post exists
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+
+    // Check if user is the page owner
+    const page = await Page.findOne({ _id: post.page });
+    if (page.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+    }
+
+    // Check if the post has been adopted already
+    if (post.adopted) {
+      return res.status(400).json({ msg: 'Post has already been adopted' });
+    }
+
+    post.adopted = true;
+    await post.save();
+
+    res.json({ post });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
+
 module.exports = router;
