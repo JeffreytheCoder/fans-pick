@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
+const normalize = require('normalize-url');
 
 const Page = require('../models/Page');
 
@@ -19,10 +20,17 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { name, bio, avatar, links, categories } = req.body;
-    console.log(links);
 
     try {    
+      const { name, bio, avatar, links, categories } = req.body;
+
+      // normalize social fields to ensure valid url
+      for (const [key, value] of Object.entries(links)) {
+        if (value && value.length > 0) {
+          links[key] = normalize(value, { forceHttps: true });
+        }
+      }
+
       // save page
       const page = new Page({
         name,
@@ -32,6 +40,7 @@ router.post(
         categories,
         user: req.user.id,
       });
+
       await page.save();
       res.json({ page });
 
