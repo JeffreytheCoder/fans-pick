@@ -7,7 +7,7 @@ const Post = require('../models/Post');
 const Page = require('../models/Page');
 const User = require('../models/User');
 
-// @route    POST api/post/create
+// @route    POST api/posts/create
 // @desc     create a post
 // @access   Private
 router.post(
@@ -15,7 +15,7 @@ router.post(
   auth,
   check('title', 'Title is required').not().isEmpty(),
   check('description', 'Description is required').not().isEmpty(),
-  check('page_id', 'Profile id is required').not().isEmpty(),
+  check('page_id', 'Page id is required').not().isEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -57,6 +57,76 @@ router.post(
     }
   }
 );
+
+// @route    PUT api/posts/:post_id
+// @desc     update a post
+// @access   Private
+router.put(
+  '/:post_id',
+  auth,
+  check('title', 'Title is required').not().isEmpty(),
+  check('description', 'Description is required').not().isEmpty(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { title, description } = req.body;
+
+      // check if the post exists
+      const post = await Post.findById(req.params.post_id);
+      if (!post) {
+        return res.status(404).json({ msg: 'Post not found' });
+      }
+
+      // Check if user is the one who posts
+      if (post.user.toString() !== req.user.id) {
+        return res.status(401).json({ msg: 'User is not the post owner, not authorized' });
+      }
+
+      // update page
+      const updatedPost = await Post.findOneAndUpdate(
+        { _id: req.params.post_id },
+        { title, description },
+        { new: true }
+      );
+      
+      res.json({ updatedPost });
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route    DELETE api/posts/:post_id
+// @desc     delete a post
+// @access   Private
+router.delete('/:post_id', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.post_id);
+
+    // check if the post exists
+    if (!post) {
+      return res.status(404).json({ msg: 'Post not found' });
+    }
+
+    // Check if user is the one who posts
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User is not the post owner, not authorized' });
+    }
+
+    await post.remove();
+    res.json({ msg: 'Post removed' });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route    GET api/posts/:post_id
 // @desc     get a post
@@ -123,37 +193,6 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 })
-
-// @route    POST api/posts/comment
-// @desc     comment to a post
-// @access   Private
-router.post('')
-
-// @route    DELETE api/posts/:post_id
-// @desc     delete a post
-// @access   Private
-router.delete('/:post_id', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.post_id);
-
-    // check if the post exists
-    if (!post) {
-      return res.status(404).json({ msg: 'Post not found' });
-    }
-
-    // Check if user is the one who posts
-    if (post.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User not authorized' });
-    }
-
-    await post.remove();
-    res.json({ msg: 'Post removed' });
-
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 // @route    PUT api/posts/adopt/:post_id
 // @desc     adopt a post

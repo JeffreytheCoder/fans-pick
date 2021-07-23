@@ -51,24 +51,59 @@ router.post(
   }
 );
 
-// @route    GET api/pages/:page_id
-// @desc     get a page
-// @access   Public
-router.get('/:page_id', async (req, res) => {
-  try {
-    // check if the page exists
-    let page = await Page.findById(req.params.page_id);
-    if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+// @route    PUT api/pages/:page_id
+// @desc     current user edits a page
+// @access   Private
+router.put(
+  '/:page_id',
+  auth,
+  check('name', 'Page name is required').not().isEmpty(),
+  check('bio', 'Page bio is required').not().isEmpty(),
+  check('avatar', 'Page avatar is required').not().isEmpty(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    res.json({ page });
+    try {    
+      // Check if the page exists
+      let page = await Page.findById(req.params.page_id);
 
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+      if (!page) {
+        return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+      }
+
+      // Check if user is the page owner
+      if (page.user.toString() !== req.user.id) {
+        return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+      }
+
+      // normalize social fields to ensure valid url
+      const { name, bio, avatar, links, categories } = req.body;
+      for (const [key, value] of Object.entries(links)) {
+        if (value && value.length > 0) {
+          links[key] = normalize(value, { forceHttps: true });
+        }
+      }
+
+      const pageFields = { name, bio, avatar, links, categories };
+
+      // update page
+      const updatedPage = await Page.findOneAndUpdate(
+        { _id: req.params.page_id },
+        { $set: pageFields},
+        { new: true }
+      );
+      
+      res.json({ updatedPage });
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
   }
-})
+);
 
 // @route    DELETE api/pages/:page_id
 // @desc     delete a page
@@ -88,6 +123,26 @@ router.delete('/:page_id', auth, async (req, res) => {
 
     await page.remove();
     res.json({ msg: 'Page removed' });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+})
+
+
+// @route    GET api/pages/:page_id
+// @desc     get a page
+// @access   Public
+router.get('/:page_id', async (req, res) => {
+  try {
+    // check if the page exists
+    let page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+    }
+
+    res.json({ page });
 
   } catch (err) {
     console.error(err.message);
