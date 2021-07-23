@@ -18,7 +18,18 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String
   },
+  signature: {
+    type: String
+  },
   pages: [
+    {
+      page: {
+        type: Schema.Types.ObjectId,
+        ref: 'pages',
+      }
+    }
+  ],
+  follows: [
     {
       page: {
         type: Schema.Types.ObjectId,

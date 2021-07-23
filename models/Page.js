@@ -18,9 +18,20 @@ const PageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  categories: {
+    type: [String]
+  },
   links: {
     type: [String]
   },
+  followers: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user'
+      }
+    }
+  ],
   posts: [
     {
       post: {

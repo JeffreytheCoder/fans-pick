@@ -26,7 +26,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, signature } = req.body;
 
     try {
       // check if the user already exists
@@ -51,7 +51,8 @@ router.post(
         name,
         email,
         avatar,
-        password
+        password,
+        signature
       });
 
       const salt = await bcrypt.genSalt(10);
