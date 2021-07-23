@@ -48,13 +48,38 @@ router.post(
 router.get('/:page_id', async (req, res) => {
   try {
     // check if the page exists
-    let page = await Page.findById(req.params.page_id).select('-password');
+    let page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
     }
+
     res.json({ page });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+})
+
+// @route    DELETE api/pages/:page_id
+// @desc     delete a page
+// @access   Private
+router.delete('/:page_id', auth, async (req, res) => {
+  try {
+    // Check if the page exists
+    let page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+    }
+
+    // Check if user is the page owner
+    if (page.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+    }
+
+    await page.remove();
+    res.json({ msg: 'Page removed' });
+
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -69,9 +94,7 @@ router.put('/follow/:page_id', auth, async (req, res) => {
     // check if the page exists
     let page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
     }
 
     const user = await User.findById(req.user.id);
