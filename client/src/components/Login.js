@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-const Register = () => {
+import { login } from '../actions/auth';
+
+const Login = ({ login }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const { name, email, password, password2 } = formData;
+  const { email, password } = formData;
 
   const onChange = (e) => {
     setFormData({
@@ -20,6 +24,7 @@ const Register = () => {
     e.preventDefault();
 
     console.log(formData);
+    login({ email, password });
   };
 
   return (
@@ -32,18 +37,17 @@ const Register = () => {
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              for="name"
+              for="email"
             >
-              Name{' '}
+              Email{' '}
             </label>{' '}
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="name"
-              name="name"
+              name="email"
               type="text"
-              placeholder="Name"
+              placeholder="Email"
               onChange={onChange}
-              required
             />
           </div>{' '}
           <div className="mb-8">
@@ -60,7 +64,6 @@ const Register = () => {
               type="password"
               placeholder="Password"
               onChange={onChange}
-              required
             />
           </div>{' '}
           <div className="flex items-center justify-between">
@@ -86,4 +89,8 @@ const Register = () => {
   );
 };
 
-export default Register;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+};
+
+export default connect(null, { login })(Login);

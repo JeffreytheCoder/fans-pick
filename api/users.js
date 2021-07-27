@@ -34,15 +34,15 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] });
+          .json({ errors: [{ msg: 'Email already exists' }] });
       }
-      
+
       // save user
       const avatar = normalize(
         gravatar.url(email, {
           s: '200',
           r: 'pg',
-          d: 'mm'
+          d: 'mm',
         }),
         { forceHttps: true }
       );
@@ -52,7 +52,7 @@ router.post(
         email,
         avatar,
         password,
-        signature
+        signature,
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -63,8 +63,8 @@ router.post(
       // return jwt
       const payload = {
         user: {
-          id: user.id
-        }
+          id: user.id,
+        },
       };
 
       jwt.sign(
@@ -89,11 +89,13 @@ router.post(
 router.post(
   '/login',
   check('email', 'Please include a valid email').isEmail(),
-  check(
-    'password',
-    'Password is required'
-  ).exists(),
+  check('password', 'Password is required').exists(),
   async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { email, password } = req.body;
 
     try {
@@ -102,7 +104,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid credentials' }] });
+          .json({ errors: [{ msg: 'Email or password incorrect' }] });
       }
 
       // check is the encrypted password matches
@@ -110,14 +112,14 @@ router.post(
       if (!isMatch) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid credentials' }] });
+          .json({ errors: [{ msg: 'Email or password incorrect' }] });
       }
 
       // return jwt
       const payload = {
         user: {
-          id: user.id
-        }
+          id: user.id,
+        },
       };
 
       jwt.sign(
@@ -144,15 +146,13 @@ router.get('/:user_id', async (req, res) => {
     // check if the user exists
     let user = await User.findById(req.params.user_id).select('-password');
     if (!user) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: 'User does not exist' }] });
+      return res.status(400).json({ errors: [{ msg: 'User does not exist' }] });
     }
     res.json({ user });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
+});
 
 module.exports = router;
