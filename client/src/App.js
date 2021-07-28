@@ -40,7 +40,7 @@ const App = () => {
         <Switch>
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <PrivateRoute exact path="/page" component={Page} />
+          <PrivateRoute exact path="/page/:page_id" component={Page} />
           {/* <PrivateRoute exact path="/page/:id/post/:id" component={Page} /> */}
           {/* <Route exact path="/create-page" component={CreatePage} /> */}
           {/* <Route exact path='/my-pages' component={MyPages} />

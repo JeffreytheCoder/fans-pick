@@ -22,9 +22,9 @@ export default function (state = initialState, action) {
     case USER_LOADED:
       return {
         ...state,
+        ...payload,
         isAuthenticated: true,
         loading: false,
-        user: payload,
       };
 
     case REGISTER_SUCCESS:
@@ -40,7 +40,7 @@ export default function (state = initialState, action) {
 
     case REGISTER_FAIL:
     case LOGIN_FAIL:
-    case AUTH_ERROR:
+    // case AUTH_ERROR:
     case LOGOUT:
       localStorage.removeItem('token');
       return {
