@@ -6,10 +6,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const normalize = require('normalize-url');
+const auth = require('../middleware/auth');
 
 const User = require('../models/User');
 
-// @route    POST api/users
+// @route    POST api/users/create
 // @desc     Register user
 // @access   Public
 router.post(
@@ -148,6 +149,21 @@ router.get('/:user_id', async (req, res) => {
     if (!user) {
       return res.status(400).json({ errors: [{ msg: 'User does not exist' }] });
     }
+    res.json({ user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route    GET api/users
+// @desc     get the current user by token
+// @access   Private
+router.get('/', auth, async (req, res) => {
+  try {
+    // check if the user exists
+    let user = await User.findById(req.user.id).select('-password');
+
     res.json({ user });
   } catch (err) {
     console.error(err.message);

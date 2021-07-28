@@ -5,8 +5,26 @@ import {
   REGISTER_FAIL,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
+  USER_LOADED,
+  AUTH_ERROR,
+  LOGOUT,
 } from '../actions/types';
 import { setAlert } from './alert';
+
+export const loadUser = () => async (dispatch) => {
+  try {
+    const res = await axios.get('/api/users');
+
+    dispatch({
+      type: USER_LOADED,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: AUTH_ERROR,
+    });
+  }
+};
 
 export const register =
   ({ name, email, password }) =>
@@ -71,3 +89,9 @@ export const login =
       });
     }
   };
+
+export const logout = async (dispatch) => {
+  dispatch({
+    type: LOGOUT,
+  });
+};

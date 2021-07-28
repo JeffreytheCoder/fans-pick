@@ -3,15 +3,18 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { login } from '../actions/auth';
+import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
 
-const Login = ({ login }) => {
+const Register = ({ setAlert, register }) => {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
+    password2: '',
   });
 
-  const { email, password } = formData;
+  const { name, email, password, password2 } = formData;
 
   const onChange = (e) => {
     setFormData({
@@ -23,8 +26,12 @@ const Login = ({ login }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
-    login({ email, password });
+    if (password !== password2) {
+      setAlert('Passwords do not match', 'danger');
+    } else {
+      console.log(formData);
+      register({ name, email, password });
+    }
   };
 
   return (
@@ -37,20 +44,36 @@ const Login = ({ login }) => {
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
+              for="name"
+            >
+              Name{' '}
+            </label>{' '}
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Name"
+              onChange={onChange}
+            />
+          </div>{' '}
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
               for="email"
             >
               Email{' '}
             </label>{' '}
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="name"
+              id="email"
               name="email"
               type="text"
               placeholder="Email"
               onChange={onChange}
             />
           </div>{' '}
-          <div className="mb-8">
+          <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               for="password"
@@ -66,18 +89,35 @@ const Login = ({ login }) => {
               onChange={onChange}
             />
           </div>{' '}
+          <div className="mb-8">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              for="password2"
+            >
+              Confirm password{' '}
+            </label>{' '}
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="password2"
+              name="password2"
+              type="password"
+              placeholder="Confirm password"
+              onChange={onChange}
+            />{' '}
+            {/* <p className="text-red-500 text-xs italic">Please confirm your password.</p> */}{' '}
+          </div>{' '}
           <div className="flex items-center justify-between">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Sign in{' '}
+              Register{' '}
             </button>{' '}
             <Link
-              to="/register"
+              to="/login"
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
             >
-              Register
+              Sign in
             </Link>{' '}
           </div>{' '}
         </form>{' '}
@@ -89,8 +129,9 @@ const Login = ({ login }) => {
   );
 };
 
-Login.propTypes = {
-  login: PropTypes.func.isRequired,
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
 };
 
-export default connect(null, { login })(Login);
+export default connect(null, { setAlert, register })(Register);
