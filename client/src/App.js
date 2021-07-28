@@ -7,6 +7,8 @@ import Navbar from './components/global/Navbar';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Alert from './components/global/Alert';
+import Page from './components/page/Page';
+import PostPage from './components/post/PostPage';
 
 // redux
 import { Provider } from 'react-redux';
@@ -38,8 +40,8 @@ const App = () => {
         <Switch>
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          {/* <PrivateRoute exact path="/page/:id" component={Page} />
-          <PrivateRoute exact path="/page/:id/post/:id" component={Page} /> */}
+          <PrivateRoute exact path="/page" component={Page} />
+          {/* <PrivateRoute exact path="/page/:id/post/:id" component={Page} /> */}
           {/* <Route exact path="/create-page" component={CreatePage} /> */}
           {/* <Route exact path='/my-pages' component={MyPages} />
           <Route exact path='/following' component={Following} />
