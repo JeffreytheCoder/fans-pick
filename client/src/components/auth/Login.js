@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { login } from '../../actions/auth';
 
-const Login = ({ login }) => {
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const history = useHistory();
+
+  if (isAuthenticated) {
+    try {
+      history.goBack();
+    } catch (err) {
+      return <Redirect to="/" />;
+    }
+  }
 
   const { email, password } = formData;
 
@@ -93,4 +103,8 @@ Login.propTypes = {
   login: PropTypes.func.isRequired,
 };
 
-export default connect(null, { login })(Login);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { login })(Login);
