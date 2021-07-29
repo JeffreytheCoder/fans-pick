@@ -50,7 +50,6 @@ router.post(
       }
 
       res.json(post);
-
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -83,7 +82,9 @@ router.put(
 
       // Check if user is the one who posts
       if (post.user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: 'User is not the post owner, not authorized' });
+        return res
+          .status(401)
+          .json({ msg: 'User is not the post owner, not authorized' });
       }
 
       // update page
@@ -92,9 +93,8 @@ router.put(
         { title, description },
         { new: true }
       );
-      
-      res.json({ updatedPost });
 
+      res.json({ updatedPost });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -116,12 +116,13 @@ router.delete('/:post_id', auth, async (req, res) => {
 
     // Check if user is the one who posts
     if (post.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User is not the post owner, not authorized' });
+      return res
+        .status(401)
+        .json({ msg: 'User is not the post owner, not authorized' });
     }
 
     await post.remove();
     res.json({ msg: 'Post removed' });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -131,21 +132,19 @@ router.delete('/:post_id', auth, async (req, res) => {
 // @route    GET api/posts/:post_id
 // @desc     get a post
 // @access   Public
-router.get('/:post_id', auth, async (req, res) => {
+router.get('/:post_id', async (req, res) => {
   try {
     // check if the post exists
     let post = await Post.findById(req.params.post_id);
     if (!post) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: 'Post does not exist' }] });
+      return res.status(400).json({ errors: [{ msg: 'Post does not exist' }] });
     }
     res.json({ post });
   } catch {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
+});
 
 // @route    PUT api/posts/like/:post_id
 // @desc     like a post
@@ -155,8 +154,8 @@ router.put('/like/:post_id', auth, async (req, res) => {
     const post = await Post.findById(req.params.post_id);
 
     // check if already liked
-    if (post.likes.some(like => like.user.toString() === req.user.id)) {
-      res.status(400).json({ msg: 'Post already liked'});
+    if (post.likes.some((like) => like.user.toString() === req.user.id)) {
+      res.status(400).json({ msg: 'Post already liked' });
     }
 
     post.likes.unshift({ user: req.user.id });
@@ -167,7 +166,7 @@ router.put('/like/:post_id', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
+});
 
 // @route    PUT api/posts/unlike/:post_id
 // @desc     unlike a post
@@ -177,13 +176,13 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
     const post = await Post.findById(req.params.post_id);
 
     // check if not liked
-    if (!post.likes.some(like => like.user.toString() === req.user.id)) {
-      res.status(400).json({ msg: 'Post has not been liked yet'});
+    if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
+      res.status(400).json({ msg: 'Post has not been liked yet' });
     }
 
     // remove like by the user
-    post.likes = post.likes.filter(like => {
-      like.user.toString() !== req.user.id
+    post.likes = post.likes.filter((like) => {
+      like.user.toString() !== req.user.id;
     });
     await post.save();
 
@@ -192,7 +191,7 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
+});
 
 // @route    PUT api/posts/adopt/:post_id
 // @desc     adopt a post
@@ -209,7 +208,9 @@ router.put('/adopt/:post_id', auth, async (req, res) => {
     // Check if user is the page owner
     const page = await Page.findOne({ _id: post.page });
     if (page.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+      return res
+        .status(401)
+        .json({ msg: 'User is not the page owner, not authorized' });
     }
 
     // Check if the post has been adopted already
@@ -221,11 +222,10 @@ router.put('/adopt/:post_id', auth, async (req, res) => {
     await post.save();
 
     res.json({ post });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
-})
+});
 
 module.exports = router;
