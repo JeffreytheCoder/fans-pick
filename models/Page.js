@@ -19,31 +19,34 @@ const PageSchema = new mongoose.Schema({
     required: true,
   },
   categories: {
-    type: [String]
+    type: [String],
   },
   links: {
-    type: [String]
+    type: [String],
   },
   followers: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'user'
-      }
-    }
+        ref: 'user',
+      },
+    },
   ],
   posts: [
     {
       post: {
         type: Schema.Types.ObjectId,
-        ref: 'post'
-      }
-    }
+        ref: 'post',
+      },
+    },
   ],
+  tags: {
+    type: [String],
+  },
   date: {
     type: Date,
-    default: Date.now
-  }
-})
+    default: Date.now,
+  },
+});
 
 module.exports = Page = mongoose.model('page', PageSchema);

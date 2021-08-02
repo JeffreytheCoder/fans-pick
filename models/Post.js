@@ -27,32 +27,35 @@ const PostSchema = new mongoose.Schema({
   },
   likes: [
     {
-      user: { 
+      user: {
         type: Schema.Types.ObjectId,
-        ref: 'user'
-      }
-    }
+        ref: 'user',
+      },
+    },
   ],
   subPosts: [
     {
-      post: { 
+      post: {
         type: Schema.Types.ObjectId,
-        ref: 'post'
+        ref: 'post',
       },
-    }
+    },
   ],
   superPost: {
     type: Schema.Types.ObjectId,
-    ref: 'post'
+    ref: 'post',
+  },
+  tags: {
+    type: [String],
   },
   adopted: {
     type: Boolean,
-    default: false
+    default: false,
   },
   date: {
     type: Date,
-    default: Date.now
-  }
-})
+    default: Date.now,
+  },
+});
 
 module.exports = Post = mongoose.model('post', PostSchema);
