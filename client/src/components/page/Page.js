@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import logoSmall from '../../images/fanspick logo small.png';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -12,7 +11,7 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
 
   useEffect(async () => {
     await getPageById(match.params.page_id);
-  }, [match.params.id]);
+  }, [match.params.page_id]);
 
   useEffect(async () => {
     if (page.page) {
@@ -31,14 +30,6 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
       }
     }
   }, [page.posts]);
-
-  // useEffect(() => {
-  //   if (page.page) {
-  //     page.page.posts.forEach(async (postId) => {
-  //       await getPostById(postId);
-  //     });
-  //   }
-  // }, [page]);
 
   return (
     <Fragment>
@@ -75,6 +66,8 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
                   likes,
                   subPosts,
                   adopted,
+                  date,
+                  tags,
                 },
                 index
               ) => {
@@ -88,7 +81,9 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
                     username={username}
                     upvotes={likes.length}
                     subPosts={subPosts.length}
-                    adopted
+                    adopted={adopted}
+                    date={date}
+                    tags={tags}
                   ></Post>
                 );
               }

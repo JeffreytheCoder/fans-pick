@@ -22,7 +22,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, description, page_id, superpost_id } = req.body;
+    const { title, description, page_id, superpost_id, tags } = req.body;
     const user = await User.findById(req.user.id).select('-password');
 
     try {
@@ -30,6 +30,7 @@ router.post(
         user: req.user.id,
         page: page_id,
         superPost: superpost_id,
+        tags: tags,
         title: title,
         description: description,
         username: user.name,
@@ -72,7 +73,7 @@ router.put(
     }
 
     try {
-      const { title, description } = req.body;
+      const { title, description, tags } = req.body;
 
       // check if the post exists
       const post = await Post.findById(req.params.post_id);
@@ -90,7 +91,7 @@ router.put(
       // update page
       const updatedPost = await Post.findOneAndUpdate(
         { _id: req.params.post_id },
-        { title, description },
+        { title, description, tags },
         { new: true }
       );
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logoSmall from '../../images/fanspick logo small.png';
+import moment from 'moment';
 
 const Post = ({
   postId,
@@ -10,6 +10,8 @@ const Post = ({
   upvotes,
   subPosts,
   adopted,
+  date,
+  tags,
 }) => {
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
@@ -18,18 +20,20 @@ const Post = ({
     <div class="font-main rounded-lg h-30 w-4/5 border-2 p-6 relative mb-7 hover:bg-gray-100 cursor-pointer transition duration-200 ease-out">
       <div class="text-xl font-bold pb-2 mr-12"> {title}</div>
       <div class="text-lg truncate pb-4 mr-20">{description}</div>
-      <div class="relative bottom-0 left-0 flex flex-row items-center ">
+
+      <div class="relative bottom-0 left-0 flex flex-row items-center flex-wrap">
         <button>
           <div class="flex flex-row items-center mr-6">
             <img
               class="h-8 mr-3 rounded-full"
-              src="https://gravatar.com/avatar/5b3bc2b40d39b0f635326eaf2b4ce36c?d=mm&r=pg&s=200"
+              src={avatar}
               alt={username}
             ></img>
             <span class="font-semibold hover:underline">{username}</span>
           </div>
         </button>
-        <div class="flex flex-row">
+
+        <div class="flex flex-row mr-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -45,6 +49,23 @@ const Post = ({
             />
           </svg>
           <span class="ml-1 hover:underline">{subPosts}</span>
+        </div>
+
+        <div class="flex flex-row mr-2">
+          {tags.map((tag, index) => {
+            return (
+              <span
+                key="index"
+                class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-gray-200 text-gray-700 rounded-full mr-2"
+              >
+                {tag}
+              </span>
+            );
+          })}
+        </div>
+
+        <div class="flex flex-row mr-6">
+          <span class="ml-1">{moment(date).fromNow()}</span>
         </div>
       </div>
       <div class="absolute top-0 right-0 flex flex-col items-center m-6">
