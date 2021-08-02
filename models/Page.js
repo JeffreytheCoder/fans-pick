@@ -32,6 +32,10 @@ const PageSchema = new mongoose.Schema({
       },
     },
   ],
+  fansName: {
+    type: String,
+    default: 'follower',
+  },
   posts: [
     {
       post: {

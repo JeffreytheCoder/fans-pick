@@ -21,8 +21,8 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    try {    
-      const { name, bio, avatar, links, categories } = req.body;
+    try {
+      const { name, bio, avatar, links, categories, fansName } = req.body;
 
       // normalize social fields to ensure valid url
       for (const [key, value] of Object.entries(links)) {
@@ -38,12 +38,12 @@ router.post(
         avatar,
         links,
         categories,
+        fansName,
         user: req.user.id,
       });
 
       await page.save();
       res.json({ page });
-
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -66,38 +66,41 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    try {    
+    try {
       // Check if the page exists
       let page = await Page.findById(req.params.page_id);
 
       if (!page) {
-        return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Page does not exist' }] });
       }
 
       // Check if user is the page owner
       if (page.user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+        return res
+          .status(401)
+          .json({ msg: 'User is not the page owner, not authorized' });
       }
 
       // normalize social fields to ensure valid url
-      const { name, bio, avatar, links, categories } = req.body;
+      const { name, bio, avatar, links, categories, fansName } = req.body;
       for (const [key, value] of Object.entries(links)) {
         if (value && value.length > 0) {
           links[key] = normalize(value, { forceHttps: true });
         }
       }
 
-      const pageFields = { name, bio, avatar, links, categories };
+      const pageFields = { name, bio, avatar, links, categories, fansName };
 
       // update page
       const updatedPage = await Page.findOneAndUpdate(
         { _id: req.params.page_id },
-        { $set: pageFields},
+        { $set: pageFields },
         { new: true }
       );
-      
-      res.json({ updatedPage });
 
+      res.json({ updatedPage });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -118,18 +121,18 @@ router.delete('/:page_id', auth, async (req, res) => {
 
     // Check if user is the page owner
     if (page.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User is not the page owner, not authorized' });
+      return res
+        .status(401)
+        .json({ msg: 'User is not the page owner, not authorized' });
     }
 
     await page.remove();
     res.json({ msg: 'Page removed' });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
-
+});
 
 // @route    GET api/pages/:page_id
 // @desc     get a page
@@ -143,12 +146,11 @@ router.get('/:page_id', async (req, res) => {
     }
 
     res.json({ page });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
-})
+});
 
 // @route    PUT api/pages/follow/:page_id
 // @desc     current user follows a page
@@ -172,7 +174,6 @@ router.put('/follow/:page_id', auth, async (req, res) => {
     await user.save();
 
     res.json({ user });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

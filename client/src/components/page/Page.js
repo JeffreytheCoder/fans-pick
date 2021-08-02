@@ -47,13 +47,30 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
             )} */}
           <div class="flex flex-col items-center m-12">
             <img
-              class="h-40 rounded-full"
+              class="h-40 w-40 rounded-full"
               src={page.page.avatar}
               alt="avatar"
             ></img>
-            <div class="text-2xl font-bold mt-4 mb-2"> {page.page.name} </div>
+
+            <div class="flex flex-row items-center justify-center mt-6 mb-3 ">
+              <div class="text-2xl font-bold"> {page.page.name} </div>
+              {/* <button class="text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              {page.page.followers.includes(auth.user._id) ? 'Joined' : 'Join'}
+            </button> */}
+            </div>
+
+            <div class="flex flex-row items-center justify-center text-xl mb-3">
+              <span class="mr-6">
+                {page.page.followers.length + ' ' + page.page.fansName + 's'}
+              </span>
+              <span>
+                {Math.floor(page.page.followers.length / 5) + ' active today'}
+              </span>
+            </div>
+
             <div class="text-xl italic">{page.page.bio}</div>
           </div>
+
           <div class="flex flex-col items-center w-screen">
             {page.posts.map(
               (
