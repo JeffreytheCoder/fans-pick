@@ -1,44 +1,98 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import logoSmall from '../../images/fanspick logo small.png';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
-import { getPageById } from '../../actions/page';
+import { getPageById, getPostById } from '../../actions/page';
 
-const Page = ({ getPageById, page, auth, match }) => {
+const Page = ({ getPageById, getPostById, page, auth, match }) => {
+  const [pageLoaded, setPageLoaded] = useState(false);
+
   useEffect(async () => {
     await getPageById(match.params.page_id);
-  }, [getPageById, match.params.id]);
+  }, [match.params.id]);
+
+  useEffect(async () => {
+    if (page.page) {
+      page.page.posts.forEach(async (postId) => {
+        await getPostById(postId._id);
+      });
+    }
+  }, [page.page]);
+
+  useEffect(async () => {
+    if (page.page) {
+      if (page.page.posts.length == page.posts.length) {
+        setPageLoaded(true);
+        console.log(page);
+        console.log('Page loaded!');
+      }
+    }
+  }, [page.posts]);
+
+  // useEffect(() => {
+  //   if (page.page) {
+  //     page.page.posts.forEach(async (postId) => {
+  //       await getPostById(postId);
+  //     });
+  //   }
+  // }, [page]);
 
   return (
     <Fragment>
-      {page == null ? (
+      {!pageLoaded ? (
         <Spinner />
       ) : (
         <div class="flex flex-col items-center font-main relative">
-          {auth.isAuthenticated &&
+          {/* {auth.isAuthenticated &&
             auth.loading == false &&
-            page.loading == false &&
-            auth.user._id == page.page.user._id && (
+            auth.user._id == page.page.user && (
               // add edit page link
               <button class="absolute top-0 right-0 m-6 rounded">
                 Edit Page
               </button>
-            )}
+            )} */}
           <div class="flex flex-col items-center m-12">
-            <img class="h-40 rounded" src={logoSmall} alt="avatar"></img>
-            <div class="text-2xl font-bold mt-4 mb-2"> Marvel Review </div>
-            <div class="text-xl italic">
-              {' '}
-              The best review channel for Marvel movies{' '}
-            </div>
+            <img
+              class="h-40 rounded-full"
+              src={page.page.avatar}
+              alt="avatar"
+            ></img>
+            <div class="text-2xl font-bold mt-4 mb-2"> {page.page.name} </div>
+            <div class="text-xl italic">{page.page.bio}</div>
           </div>
           <div class="flex flex-col items-center w-screen">
-            <Post />
-            <Post />
-            <Post />
+            {page.posts.map(
+              (
+                {
+                  _id,
+                  title,
+                  description,
+                  avatar,
+                  username,
+                  likes,
+                  subPosts,
+                  adopted,
+                },
+                index
+              ) => {
+                return (
+                  <Post
+                    key={index}
+                    postId={_id}
+                    title={title}
+                    description={description}
+                    avatar={avatar}
+                    username={username}
+                    upvotes={likes.length}
+                    subPosts={subPosts.length}
+                    adopted
+                  ></Post>
+                );
+              }
+            )}
           </div>
         </div>
       )}
@@ -48,13 +102,14 @@ const Page = ({ getPageById, page, auth, match }) => {
 
 Page.propTypes = {
   getPageById: PropTypes.func.isRequired,
+  getPostById: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  page: state.profile,
+  page: state.page,
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getPageById })(Page);
+export default connect(mapStateToProps, { getPageById, getPostById })(Page);

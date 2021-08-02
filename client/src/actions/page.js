@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_PAGE, PAGE_ERROR } from './types';
+import { GET_PAGE, PAGE_ERROR, GET_POST, POST_ERROR } from './types';
 
 export const getPageById = (pageId) => async (dispatch) => {
   try {
@@ -13,6 +13,22 @@ export const getPageById = (pageId) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: PAGE_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status },
+    });
+  }
+};
+
+export const getPostById = (postId) => async (dispatch) => {
+  try {
+    const res = await axios.get(`/api/posts/${postId}`);
+
+    dispatch({
+      type: GET_POST,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status },
     });
   }

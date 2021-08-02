@@ -14,4 +14,5 @@ export const LOGOUT = 'LOGOUT';
 // page
 export const GET_PAGE = 'GET_PAGE';
 export const PAGE_ERROR = 'PAGE_ERROR';
-export const GET_USER_PAGES = 'GET_USER_PAGES';
+export const GET_POST = 'GET_POST';
+export const POST_ERROR = 'POST_ERROR';

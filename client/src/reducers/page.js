@@ -1,8 +1,8 @@
-import { GET_PAGE, PAGE_ERROR } from '../actions/types';
+import { GET_PAGE, PAGE_ERROR, GET_POST, POST_ERROR } from '../actions/types';
 
 const initialState = {
   page: null,
-  loading: true,
+  posts: [],
 };
 
 export default function (state = initialState, action) {
@@ -10,13 +10,27 @@ export default function (state = initialState, action) {
 
   switch (type) {
     case GET_PAGE:
-      return { ...state, ...payload, loading: false };
+      return {
+        ...state,
+        ...payload,
+      };
+
+    case GET_POST:
+      return {
+        ...state,
+        posts: [...state.posts, payload.post],
+      };
 
     case PAGE_ERROR:
       return {
         ...state,
         page: null,
-        loading: false,
+      };
+
+    case POST_ERROR:
+      return {
+        ...state,
+        posts: [],
       };
 
     default:
