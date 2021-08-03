@@ -18,7 +18,31 @@ const Post = ({
 
   return (
     <div class="font-main rounded-lg h-30 w-4/5 border-2 p-6 relative mb-7 hover:bg-gray-100 cursor-pointer transition duration-200 ease-out">
-      <div class="text-xl font-bold pb-2 mr-12"> {title}</div>
+      <div class="flex flex-row">
+        <div class="text-xl font-bold pb-2 mr-12"> {title}</div>
+        {adopted ? (
+          <div class="flex flex-row">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={4}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span class="text-lg font-bold text-green-600">adopted</span>
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
+
       <div class="text-lg truncate pb-4 mr-20">{description}</div>
 
       <div class="relative bottom-0 left-0 flex flex-row items-center flex-wrap">
@@ -56,7 +80,7 @@ const Post = ({
             return (
               <span
                 key="index"
-                class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-gray-200 text-gray-700 rounded-full mr-2"
+                class="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-green-200 text-green-700 rounded-full mr-2"
               >
                 {tag}
               </span>
@@ -76,7 +100,7 @@ const Post = ({
             viewBox="0 0 24 24"
             stroke="currentColor"
             class={`h-7 w-7 ${
-              upvoted ? 'font-bold text-blue-600' : 'hover:text-blue-600'
+              upvoted ? 'font-bold text-green-600' : 'hover:text-green-600'
             }`}
           >
             <path
@@ -95,7 +119,7 @@ const Post = ({
             viewBox="0 0 24 24"
             stroke="currentColor"
             class={`h-7 w-7 ${
-              downvoted ? 'font-bold text-red-600' : 'hover:text-red-600'
+              downvoted ? 'font-bold text-purple-600' : 'hover:text-purple-600'
             }`}
           >
             <path

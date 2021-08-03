@@ -6,6 +6,11 @@ module.exports = {
       fontFamily: {
         main: ['Nunito'],
       },
+      color: {
+        primary: '#FFEAB6',
+        light: '#FFF9E9',
+        saturated: '#FFDB83',
+      },
     },
   },
   variants: {

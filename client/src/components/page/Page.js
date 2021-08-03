@@ -37,14 +37,14 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
         <Spinner />
       ) : (
         <div class="flex flex-col items-center font-main relative">
-          {/* {auth.isAuthenticated &&
+          {auth &&
+            page &&
+            auth.isAuthenticated &&
             auth.loading == false &&
             auth.user._id == page.page.user && (
               // add edit page link
-              <button class="absolute top-0 right-0 m-6 rounded">
-                Edit Page
-              </button>
-            )} */}
+              <button class="absolute top-0 right-0 m-6 btn">Edit Page</button>
+            )}
           <div class="flex flex-col items-center m-12">
             <img
               class="h-40 w-40 rounded-full"
@@ -52,11 +52,13 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
               alt="avatar"
             ></img>
 
-            <div class="flex flex-row items-center justify-center mt-6 mb-3 ">
+            <div class="flex flex-row items-center justify-center mt-4 mb-3">
               <div class="text-2xl font-bold"> {page.page.name} </div>
-              {/* <button class="text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              {page.page.followers.includes(auth.user._id) ? 'Joined' : 'Join'}
-            </button> */}
+              <button class="btn rounded-full py-1.5">
+                {page.page.followers.includes(auth.user._id)
+                  ? 'Joined'
+                  : 'Join'}
+              </button>
             </div>
 
             <div class="flex flex-row items-center justify-center text-xl mb-3">
@@ -69,6 +71,10 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
             </div>
 
             <div class="text-xl italic">{page.page.bio}</div>
+
+            {/* <button class="text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              {page.page.followers.includes(auth.user._id) ? 'Joined' : 'Join'}
+            </button> */}
           </div>
 
           <div class="flex flex-col items-center w-screen">
@@ -85,6 +91,7 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
                   adopted,
                   date,
                   tags,
+                  page,
                 },
                 index
               ) => {
@@ -101,6 +108,7 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
                     adopted={adopted}
                     date={date}
                     tags={tags}
+                    pageId={page}
                   ></Post>
                 );
               }
