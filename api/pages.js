@@ -131,6 +131,11 @@ router.delete('/:page_id', auth, async (req, res) => {
         .json({ msg: 'User is not the page owner, not authorized' });
     }
 
+    // remove page from user's pages
+    const user = await Post.findById(req.user.id);
+    user.pages = user.pages.filter((page) => page != req.params.page_id);
+    await user.save();
+
     await page.remove();
     res.json({ msg: 'Page removed' });
   } catch (err) {
