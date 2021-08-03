@@ -41,8 +41,13 @@ router.post(
         fansName,
         user: req.user.id,
       });
-
       await page.save();
+
+      // add page to user's pages
+      const user = await Post.findById(req.user.id);
+      user.pages.unshift(page);
+      await user.save();
+
       res.json({ page });
     } catch (err) {
       console.error(err.message);
