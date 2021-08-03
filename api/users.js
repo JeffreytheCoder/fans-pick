@@ -71,12 +71,71 @@ router.post(
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: '5 days' },
+        { expiresIn: '30 days' },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
         }
       );
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route    PUT api/users/:user_id
+// @desc     Update user
+// @access   Private
+router.put(
+  '/:user_id',
+  auth,
+  check('name', 'Name is required').not().isEmpty(),
+  check('email', 'Please include a valid email').isEmail(),
+  check(
+    'password',
+    'Please enter a password with 6 or more characters'
+  ).isLength({ min: 6 }),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    let { name, email, password, signature } = req.body;
+
+    try {
+      // check if the user exists
+      user = await User.findById(req.params.user_id);
+      if (!user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User does not exists' }] });
+      }
+
+      // process avatar and password
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: '200',
+          r: 'pg',
+          d: 'mm',
+        }),
+        { forceHttps: true }
+      );
+
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(password, salt);
+
+      const userFields = { name, email, password, signature };
+
+      // update page
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.params.user_id },
+        { $set: userFields },
+        { new: true }
+      );
+
+      res.json({ updatedUser });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
@@ -126,7 +185,7 @@ router.post(
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: '5 days' },
+        { expiresIn: '30 days' },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
