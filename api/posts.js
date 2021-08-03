@@ -122,6 +122,17 @@ router.delete('/:post_id', auth, async (req, res) => {
         .json({ msg: 'User is not the post owner, not authorized' });
     }
 
+    // remove post from superpost's subposts
+    if (post.superPost) {
+      const superPost = await Post.findById(post.superPost.id);
+      superPost.subPosts.filter(
+        (subPost) => subPost._id !== req.params.post_id
+      );
+      superPost.save();
+    }
+
+    // TODO: delete all subposts and all their subposts
+
     await post.remove();
     res.json({ msg: 'Post removed' });
   } catch (err) {
