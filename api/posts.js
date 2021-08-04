@@ -16,31 +16,56 @@ router.post(
   check('title', 'Title is required').not().isEmpty(),
   check('description', 'Description is required').not().isEmpty(),
   check('page_id', 'Page id is required').not().isEmpty(),
+  check('section', 'Section is required').not().isEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, description, page_id, superpost_id, tags } = req.body;
+    const { title, description, page_id, superpost_id, section } = req.body;
     const user = await User.findById(req.user.id).select('-password');
 
     try {
+      // check if page exists
+      const page = await Page.findById(page_id);
+      if (!page) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Page does not exist' }] });
+      }
+
+      // check if section exists
+      let sectionFound = false;
+      page.sections.forEach((sec) => {
+        if (sec.name == section) {
+          sectionFound = true;
+        }
+      });
+      if (!sectionFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Section does not exist' }] });
+      }
+
       let newPost = new Post({
         user: req.user.id,
         page: page_id,
         superPost: superpost_id,
-        tags: tags,
-        title: title,
+        title,
+        section: section,
         description: description,
         username: user.name,
         avatar: user.avatar,
       });
       const post = await newPost.save();
 
-      // add post to profile
-      const page = await Page.findById(page_id);
-      page.posts.unshift(post);
+      // add post to page section
+      page.sections.forEach((sec) => {
+        if (sec.name == section) {
+          sec.posts.unshift(post);
+        }
+      });
       await page.save();
 
       // add post to subposts of the superpost
@@ -73,7 +98,7 @@ router.put(
     }
 
     try {
-      const { title, description, tags } = req.body;
+      const { title, description, section } = req.body;
 
       // check if the post exists
       const post = await Post.findById(req.params.post_id);
@@ -91,7 +116,7 @@ router.put(
       // update page
       const updatedPost = await Post.findOneAndUpdate(
         { _id: req.params.post_id },
-        { title, description, tags },
+        { title, description, section },
         { new: true }
       );
 
@@ -122,11 +147,22 @@ router.delete('/:post_id', auth, async (req, res) => {
         .json({ msg: 'User is not the post owner, not authorized' });
     }
 
+    // remove post from page section
+    const page = await Page.findById(post.page);
+    page.sections.forEach((sec) => {
+      if (sec.name === post.section) {
+        sec.posts.filter(
+          (secPost) => secPost._id.toString() !== post._id.toString()
+        );
+      }
+      page.save();
+    });
+
     // remove post from superpost's subposts
     if (post.superPost) {
       const superPost = await Post.findById(post.superPost.id);
       superPost.subPosts.filter(
-        (subPost) => subPost._id !== req.params.post_id
+        (subPost) => subPost._id.toString() !== req.params.post_id.toString()
       );
       superPost.save();
     }

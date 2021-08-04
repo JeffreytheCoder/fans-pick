@@ -98,7 +98,15 @@ router.put(
         }
       }
 
-      const pageFields = { name, bio, avatar, links, categories, fansName };
+      const pageFields = {
+        name,
+        bio,
+        avatar,
+        links,
+        categories,
+        fansName,
+        sections,
+      };
 
       // update page
       const updatedPage = await Page.findOneAndUpdate(
@@ -135,7 +143,9 @@ router.delete('/:page_id', auth, async (req, res) => {
 
     // remove page from user's pages
     const user = await Post.findById(req.user.id);
-    user.pages = user.pages.filter((page) => page != req.params.page_id);
+    user.pages = user.pages.filter(
+      (page) => page._id.toString() !== req.params.page_id.toString()
+    );
     await user.save();
 
     await page.remove();

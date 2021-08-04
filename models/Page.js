@@ -34,7 +34,7 @@ const PageSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
       },
-      isAnswered: {
+      isAnswer: {
         type: Boolean,
         default: false,
       },
