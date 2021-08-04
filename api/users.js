@@ -33,9 +33,7 @@ router.post(
       // check if the user already exists
       user = await User.findOne({ email });
       if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Email already exists' }] });
+        return res.status(400).json({ msg: 'Email already exists' });
       }
 
       // save user
@@ -108,9 +106,7 @@ router.put(
       // check if the user exists
       user = await User.findById(req.params.user_id);
       if (!user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'User does not exists' }] });
+        return res.status(400).json({ msg: 'User does not exists' });
       }
 
       // process avatar and password
@@ -162,17 +158,13 @@ router.post(
       // check if the user exists
       let user = await User.findOne({ email });
       if (!user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Email or password incorrect' }] });
+        return res.status(400).json({ msg: 'Email or password incorrect' });
       }
 
       // check is the encrypted password matches
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Email or password incorrect' }] });
+        return res.status(400).json({ msg: 'Email or password incorrect' });
       }
 
       // return jwt
@@ -206,7 +198,7 @@ router.get('/:user_id', async (req, res) => {
     // check if the user exists
     let user = await User.findById(req.params.user_id).select('-password');
     if (!user) {
-      return res.status(400).json({ errors: [{ msg: 'User does not exist' }] });
+      return res.status(400).json({ msg: 'User does not exist' });
     }
     res.json({ user });
   } catch (err) {

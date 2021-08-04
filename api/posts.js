@@ -30,9 +30,7 @@ router.post(
       // check if page exists
       const page = await Page.findById(page_id);
       if (!page) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Page does not exist' }] });
+        return res.status(400).json({ msg: 'Page does not exist' });
       }
 
       // check if section exists
@@ -43,9 +41,7 @@ router.post(
         }
       });
       if (!sectionFound) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Section does not exist' }] });
+        return res.status(400).json({ msg: 'Section does not exist' });
       }
 
       let newPost = new Post({
@@ -185,7 +181,7 @@ router.get('/:post_id', async (req, res) => {
     // check if the post exists
     let post = await Post.findById(req.params.post_id);
     if (!post) {
-      return res.status(400).json({ errors: [{ msg: 'Post does not exist' }] });
+      return res.status(400).json({ msg: 'Post does not exist' });
     }
     res.json({ post });
   } catch {

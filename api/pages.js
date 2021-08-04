@@ -78,9 +78,7 @@ router.put(
       let page = await Page.findById(req.params.page_id);
 
       if (!page) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Page does not exist' }] });
+        return res.status(400).json({ msg: 'Page does not exist' });
       }
 
       // Check if user is the page owner
@@ -131,7 +129,7 @@ router.delete('/:page_id', auth, async (req, res) => {
     // Check if the page exists
     let page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ msg: 'Page does not exist' });
     }
 
     // Check if user is the page owner
@@ -179,7 +177,7 @@ router.get('/:page_id', async (req, res) => {
     // check if the page exists
     let page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ msg: 'Page does not exist' });
     }
 
     res.json({ page });
@@ -199,7 +197,7 @@ router.get('/:page_id/posts', async (req, res) => {
     // check if page exists
     const page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ msg: 'Page does not exist' });
     }
 
     // check if section exists
@@ -211,36 +209,22 @@ router.get('/:page_id/posts', async (req, res) => {
         }
       });
       if (!sectionFound) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Section does not exist' }] });
+        return res.status(400).json({ msg: 'Section does not exist' });
       }
     }
 
     // check if sorting and order are allowed
     if (sorting && order) {
       if (sorting !== 'date' && sorting !== 'likes') {
-        return res
-          .status(400)
-          .json({
-            errors: [
-              {
-                msg: 'Sorting method is not allowed. Allowed methods: date, likes',
-              },
-            ],
-          });
+        return res.status(400).json({
+          msg: 'Sorting method is not allowed. Allowed methods: date, likes',
+        });
       }
 
       if (order !== 'asc' && order !== 'desc') {
-        return res
-          .status(400)
-          .json({
-            errors: [
-              {
-                msg: 'Order method is not allowed. Allowed methods: asc, desc',
-              },
-            ],
-          });
+        return res.status(400).json({
+          msg: 'Order method is not allowed. Allowed methods: asc, desc',
+        });
       }
     }
 
@@ -279,7 +263,7 @@ router.put('/follow/:page_id', auth, async (req, res) => {
     // check if the page exists
     let page = await Page.findById(req.params.page_id);
     if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+      return res.status(400).json({ msg: 'Page does not exist' });
     }
 
     const user = await User.findById(req.user.id);
