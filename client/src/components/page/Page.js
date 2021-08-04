@@ -29,7 +29,7 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
         console.log('Page loaded!');
       }
     }
-  }, [page.posts]);
+  }, [page]);
 
   return (
     <Fragment>
