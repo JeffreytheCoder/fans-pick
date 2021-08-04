@@ -45,8 +45,8 @@ const PostSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'post',
   },
-  tags: {
-    type: [String],
+  section: {
+    type: String,
   },
   adopted: {
     type: Boolean,

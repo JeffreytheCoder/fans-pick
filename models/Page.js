@@ -24,6 +24,21 @@ const PageSchema = new mongoose.Schema({
   links: {
     type: [String],
   },
+  sections: [
+    {
+      name: {
+        type: String,
+      },
+      posts: [
+        {
+          post: {
+            type: Schema.Types.ObjectId,
+            ref: 'post',
+          },
+        },
+      ],
+    },
+  ],
   followers: [
     {
       user: {
@@ -35,17 +50,6 @@ const PageSchema = new mongoose.Schema({
   fansName: {
     type: String,
     default: 'follower',
-  },
-  posts: [
-    {
-      post: {
-        type: Schema.Types.ObjectId,
-        ref: 'post',
-      },
-    },
-  ],
-  tags: {
-    type: [String],
   },
   date: {
     type: Date,
