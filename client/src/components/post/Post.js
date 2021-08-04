@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import axios from 'axios';
+
+import { setAlert } from '../../actions/alert';
 
 const Post = ({
   postId,
@@ -12,15 +17,88 @@ const Post = ({
   adopted,
   date,
   tags,
+  pageId,
+  auth,
+  setAlert,
 }) => {
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
 
+  const isPageOwner = () => {
+    auth.user.pages.forEach((page) => {
+      if (page._id === pageId) {
+        return true;
+      }
+    });
+    return false;
+  };
+
+  const adoptPost = async () => {
+    console.log('adopting');
+    try {
+      const res = await axios.put(`/api/posts/adopt/${postId}`);
+      console.log(res.data);
+    } catch (err) {
+      setAlert(err.response.statusText);
+      console.log(err);
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log(auth.user.pages);
+  //   console.log(pageId);
+  //   console.log(auth.user.pages.includes(pageId));
+  // });
+
   return (
-    <div class="font-main rounded-lg h-30 w-4/5 border-2 p-6 relative mb-7 hover:bg-gray-100 cursor-pointer transition duration-200 ease-out">
-      <div class="flex flex-row">
-        <div class="text-xl font-bold pb-2 mr-12"> {title}</div>
-        {adopted ? (
+    <div class="font-main rounded-lg h-30 w-4/5 border-2 p-6 relative mb-7 hover:bg-gray-100 transition duration-200 ease-out">
+      <div class="relative flex flex-row mr-12 items-center mb-2">
+        <div class="text-xl font-bold mr-4"> {title}</div>
+        {isPageOwner ? (
+          adopted ? (
+            <button class="z-10">
+              <div class="flex flex-row items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={4}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-lg font-bold text-green-600">adopted</span>
+              </div>
+            </button>
+          ) : (
+            <button onClick={() => adoptPost()}>
+              <div class="flex flex-row">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 text-green-600 text-opacity-50"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={4}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-lg font-bold text-green-600 text-opacity-50">
+                  adopt
+                </span>
+              </div>
+            </button>
+          )
+        ) : adopted ? (
           <div class="flex flex-row">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +124,7 @@ const Post = ({
       <div class="text-lg truncate pb-4 mr-20">{description}</div>
 
       <div class="relative bottom-0 left-0 flex flex-row items-center flex-wrap">
-        <button>
+        <button onClick={() => adoptPost()}>
           <div class="flex flex-row items-center mr-6">
             <img
               class="h-8 mr-3 rounded-full"
@@ -135,4 +213,13 @@ const Post = ({
   );
 };
 
-export default Post;
+Post.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { setAlert })(Post);
