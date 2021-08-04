@@ -60,7 +60,7 @@ const Post = ({
               <div class="flex flex-row items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 text-green-600"
+                  class="h-6 w-6 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -72,7 +72,7 @@ const Post = ({
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span class="text-lg font-bold text-green-600">adopted</span>
+                <span class="text-lg font-bold text-green-500">adopted</span>
               </div>
             </button>
           ) : (
@@ -80,7 +80,7 @@ const Post = ({
               <div class="flex flex-row">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 text-green-600 text-opacity-50"
+                  class="h-6 w-6 text-green-500 text-opacity-50"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -92,7 +92,7 @@ const Post = ({
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span class="text-lg font-bold text-green-600 text-opacity-50">
+                <span class="text-lg font-bold text-green-500 text-opacity-50">
                   adopt
                 </span>
               </div>
@@ -102,7 +102,7 @@ const Post = ({
           <div class="flex flex-row">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-green-600"
+              class="h-6 w-6 text-green-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -114,7 +114,7 @@ const Post = ({
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            <span class="text-lg font-bold text-green-600">adopted</span>
+            <span class="text-lg font-bold text-green-500">adopted</span>
           </div>
         ) : (
           <div></div>
@@ -178,7 +178,7 @@ const Post = ({
             viewBox="0 0 24 24"
             stroke="currentColor"
             class={`h-7 w-7 ${
-              upvoted ? 'font-bold text-green-600' : 'hover:text-green-600'
+              upvoted ? 'font-bold text-green-500' : 'hover:text-green-500'
             }`}
           >
             <path

@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
 import { getPageById, getPostById } from '../../actions/page';
+import { setAlert } from '../../actions/alert';
 
-const Page = ({ getPageById, getPostById, page, auth, match }) => {
+const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
   const [pageLoaded, setPageLoaded] = useState(false);
 
   useEffect(async () => {
@@ -31,6 +33,25 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
     }
   }, [page]);
 
+  const isUserFollowed = () => {
+    page.page.followers.forEach((follower) => {
+      if (follower._id == auth.user._id) {
+        return true;
+      }
+    });
+    return false;
+  };
+
+  const followPage = async () => {
+    try {
+      const res = await axios.put(`/api/pages/follow/${page.page._id}`);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+      setAlert(err.response.statusText);
+    }
+  };
+
   return (
     <Fragment>
       {!pageLoaded ? (
@@ -54,11 +75,18 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
 
             <div class="flex flex-row items-center justify-center mt-4 mb-3">
               <div class="text-2xl font-bold"> {page.page.name} </div>
-              <button class="btn rounded-full py-1.5">
-                {page.page.followers.includes(auth.user._id)
-                  ? 'Joined'
-                  : 'Join'}
-              </button>
+              {isUserFollowed ? (
+                <button class="btn rounded-full py-1.5 bg-green-500 text-white">
+                  Joined{' '}
+                </button>
+              ) : (
+                <button
+                  class="btn rounded-full py-1.5"
+                  onClick={() => followPage()}
+                >
+                  Join{' '}
+                </button>
+              )}
             </div>
 
             <div class="flex flex-row items-center justify-center text-xl mb-3">
@@ -71,10 +99,6 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
             </div>
 
             <div class="text-xl italic">{page.page.bio}</div>
-
-            {/* <button class="text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              {page.page.followers.includes(auth.user._id) ? 'Joined' : 'Join'}
-            </button> */}
           </div>
 
           <div class="flex flex-col items-center w-screen">
@@ -123,6 +147,7 @@ const Page = ({ getPageById, getPostById, page, auth, match }) => {
 Page.propTypes = {
   getPageById: PropTypes.func.isRequired,
   getPostById: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
 };
@@ -132,4 +157,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getPageById, getPostById })(Page);
+export default connect(mapStateToProps, { getPageById, getPostById, setAlert })(
+  Page
+);
