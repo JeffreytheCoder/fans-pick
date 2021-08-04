@@ -124,7 +124,7 @@ const Post = ({
       <div class="text-lg truncate pb-4 mr-20">{description}</div>
 
       <div class="relative bottom-0 left-0 flex flex-row items-center flex-wrap">
-        <button onClick={() => adoptPost()}>
+        <button>
           <div class="flex flex-row items-center mr-6">
             <img
               class="h-8 mr-3 rounded-full"
@@ -153,7 +153,7 @@ const Post = ({
           <span class="ml-1 hover:underline">{subPosts}</span>
         </div>
 
-        <div class="flex flex-row mr-2">
+        <div class={`flex flex-row ${tags.length > 0 ? 'mr-2' : ''}`}>
           {tags.map((tag, index) => {
             return (
               <span
