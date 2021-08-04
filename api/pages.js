@@ -142,11 +142,21 @@ router.delete('/:page_id', auth, async (req, res) => {
     }
 
     // remove page from user's pages
-    const user = await Post.findById(req.user.id);
+    const user = await User.findById(req.user.id);
     user.pages = user.pages.filter(
       (page) => page._id.toString() !== req.params.page_id.toString()
     );
     await user.save();
+
+    // remove posts in every section
+    page.sections.forEach((sec) => {
+      sec.posts.forEach(async (secPost) => {
+        const post = await Post.findById(secPost._id);
+        await post.remove();
+      });
+    });
+
+    // TODO: remove every subposts recursively
 
     await page.remove();
     res.json({ msg: 'Page removed' });
@@ -155,6 +165,11 @@ router.delete('/:page_id', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+// @route    DELETE api/pages/:page_id
+// @desc     delete a section
+// @access   Private
+// TODO
 
 // @route    GET api/pages/:page_id
 // @desc     get a page
@@ -168,6 +183,88 @@ router.get('/:page_id', async (req, res) => {
     }
 
     res.json({ page });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route    GET api/pages/:page_id/posts
+// @desc     get posts of a page
+// @access   Public
+router.get('/:page_id/posts', async (req, res) => {
+  try {
+    const { section, sorting, order } = req.body;
+
+    // check if page exists
+    const page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+    }
+
+    // check if section exists
+    if (section) {
+      let sectionFound = false;
+      page.sections.forEach((sec) => {
+        if (sec.name == section) {
+          sectionFound = true;
+        }
+      });
+      if (!sectionFound) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Section does not exist' }] });
+      }
+    }
+
+    // check if sorting and order are allowed
+    if (sorting && order) {
+      if (sorting !== 'date' && sorting !== 'likes') {
+        return res
+          .status(400)
+          .json({
+            errors: [
+              {
+                msg: 'Sorting method is not allowed. Allowed methods: date, likes',
+              },
+            ],
+          });
+      }
+
+      if (order !== 'asc' && order !== 'desc') {
+        return res
+          .status(400)
+          .json({
+            errors: [
+              {
+                msg: 'Order method is not allowed. Allowed methods: asc, desc',
+              },
+            ],
+          });
+      }
+    }
+
+    let posts = null;
+    // return sorted posts in a section
+    if (section && sorting && order) {
+      if (sorting === 'date') {
+        posts = await Post.find({
+          page: req.params.page_id,
+          section,
+        }).sort({ date: order });
+      } else {
+        posts = await Post.find({
+          page: req.params.page_id,
+          section,
+        }).sort({ likes: order });
+      }
+    } else if (section) {
+      posts = await Post.find({ page: req.params.page_id, section });
+    } else {
+      posts = await Post.find({ page: req.params.page_id });
+    }
+
+    res.json({ posts });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -203,26 +300,5 @@ router.put('/follow/:page_id', auth, async (req, res) => {
 });
 
 // TODO: unfollow page
-
-// @route    GET api/pages/:page_id/posts
-// @desc     get posts of a page
-// @access   Public
-router.get('/:page_id/posts', async (req, res) => {
-  try {
-    const { section, sorting, order } = req.body;
-
-    // check if page exists
-    const page = await Page.findById(req.params.page_id);
-    if (!page) {
-      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
-    }
-
-    // check if section exists
-    // if (!page.sections.includes)
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
 
 module.exports = router;
