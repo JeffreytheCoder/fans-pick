@@ -215,15 +215,20 @@ router.get('/:page_id/posts', async (req, res) => {
 
     // check if sorting and order are allowed
     if (sorting && order) {
-      if (sorting !== 'date' && sorting !== 'likes') {
+      if (sorting !== 'date' && sorting !== 'likes' && sorting !== 'adopted') {
         return res.status(400).json({
-          msg: 'Sorting method is not allowed. Allowed methods: date, likes',
+          msg: 'Sorting method is not allowed. Allowed methods: date, likes, adopted',
         });
       }
 
-      if (order !== 'asc' && order !== 'desc') {
+      if (
+        order !== 'asc' &&
+        order !== 'desc' &&
+        order !== 'true' &&
+        order !== 'false'
+      ) {
         return res.status(400).json({
-          msg: 'Order method is not allowed. Allowed methods: asc, desc',
+          msg: 'Order method is not allowed. Allowed methods: asc, desc, true, false',
         });
       }
     }
@@ -236,11 +241,47 @@ router.get('/:page_id/posts', async (req, res) => {
           page: req.params.page_id,
           section,
         }).sort({ date: order });
-      } else {
+      } else if (sorting === 'likes') {
         posts = await Post.find({
           page: req.params.page_id,
           section,
         }).sort({ likes: order });
+      } else if (sorting === 'adopted') {
+        if (order == 'true') {
+          posts = await Post.find({
+            page: req.params.page_id,
+            section,
+            adopted: true,
+          }).sort({ date: 'desc' });
+        } else {
+          posts = await Post.find({
+            page: req.params.page_id,
+            section,
+            adopted: false,
+          }).sort({ date: 'desc' });
+        }
+      }
+    } else if (sorting && order) {
+      if (sorting === 'date') {
+        posts = await Post.find({
+          page: req.params.page_id,
+        }).sort({ date: order });
+      } else if (sorting === 'likes') {
+        posts = await Post.find({
+          page: req.params.page_id,
+        }).sort({ likes: order });
+      } else if (sorting === 'adopted') {
+        if (order == 'true') {
+          posts = await Post.find({
+            page: req.params.page_id,
+            adopted: true,
+          }).sort({ date: 'desc' });
+        } else {
+          posts = await Post.find({
+            page: req.params.page_id,
+            adopted: false,
+          }).sort({ date: 'desc' });
+        }
       }
     } else if (section) {
       posts = await Post.find({ page: req.params.page_id, section });
