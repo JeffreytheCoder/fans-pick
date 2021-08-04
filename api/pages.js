@@ -192,7 +192,7 @@ router.get('/:page_id', async (req, res) => {
 // @access   Public
 router.get('/:page_id/posts', async (req, res) => {
   try {
-    const { section, sorting, order } = req.body;
+    const { section, sorting, order } = req.query;
 
     // check if page exists
     const page = await Page.findById(req.params.page_id);

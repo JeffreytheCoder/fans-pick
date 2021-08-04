@@ -16,7 +16,6 @@ const Post = ({
   subPosts,
   adopted,
   date,
-  tags,
   pageId,
   auth,
   setAlert,
@@ -153,7 +152,7 @@ const Post = ({
           <span class="ml-1 hover:underline">{subPosts}</span>
         </div>
 
-        <div class={`flex flex-row ${tags.length > 0 ? 'mr-2' : ''}`}>
+        {/* <div class={`flex flex-row ${tags.length > 0 ? 'mr-2' : ''}`}>
           {tags.map((tag, index) => {
             return (
               <span
@@ -164,7 +163,7 @@ const Post = ({
               </span>
             );
           })}
-        </div>
+        </div> */}
 
         <div class="flex flex-row mr-6">
           <span class="ml-1">{moment(date).fromNow()}</span>

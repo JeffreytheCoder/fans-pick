@@ -1,8 +1,17 @@
-import { GET_PAGE, PAGE_ERROR, GET_POST, POST_ERROR } from '../actions/types';
+import {
+  GET_PAGE,
+  PAGE_ERROR,
+  GET_POST,
+  POST_ERROR,
+  GET_PAGE_POSTS,
+  PAGE_POSTS_ERROR,
+} from '../actions/types';
 
 const initialState = {
   page: null,
   posts: [],
+  pageLoading: true,
+  postsLoading: true,
 };
 
 export default function (state = initialState, action) {
@@ -13,6 +22,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         ...payload,
+        pageLoading: false,
       };
 
     case GET_POST:
@@ -21,16 +31,31 @@ export default function (state = initialState, action) {
         posts: [...state.posts, payload.post],
       };
 
+    case GET_PAGE_POSTS:
+      return {
+        ...state,
+        posts: payload.posts,
+        postsLoading: false,
+      };
+
     case PAGE_ERROR:
       return {
         ...state,
         page: null,
+        pageLoading: false,
       };
 
     case POST_ERROR:
       return {
         ...state,
         posts: [],
+      };
+
+    case PAGE_POSTS_ERROR:
+      return {
+        ...state,
+        posts: [],
+        postsLoading: false,
       };
 
     default:

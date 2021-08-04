@@ -5,33 +5,21 @@ import axios from 'axios';
 
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
-import { getPageById, getPostById } from '../../actions/page';
+import { getPageById, getPostByPageId } from '../../actions/page';
 import { setAlert } from '../../actions/alert';
 
-const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
-  const [pageLoaded, setPageLoaded] = useState(false);
-
+const Page = ({
+  getPageById,
+  getPostByPageId,
+  page,
+  auth,
+  match,
+  setAlert,
+}) => {
   useEffect(async () => {
     await getPageById(match.params.page_id);
+    await getPostByPageId(match.params.page_id, 'Ideas');
   }, [match.params.page_id]);
-
-  useEffect(async () => {
-    if (page.page) {
-      page.page.posts.forEach(async (postId) => {
-        await getPostById(postId._id);
-      });
-    }
-  }, [page.page]);
-
-  useEffect(async () => {
-    if (page.page) {
-      if (page.page.posts.length == page.posts.length) {
-        setPageLoaded(true);
-        console.log(page);
-        console.log('Page loaded!');
-      }
-    }
-  }, [page]);
 
   const isUserFollowed = () => {
     page.page.followers.forEach((follower) => {
@@ -54,13 +42,11 @@ const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
 
   return (
     <Fragment>
-      {!pageLoaded ? (
+      {page.pageLoading && page.postsLoading ? (
         <Spinner />
       ) : (
         <div class="flex flex-col items-center font-main relative">
-          {auth &&
-            page &&
-            auth.isAuthenticated &&
+          {auth.isAuthenticated &&
             auth.loading == false &&
             auth.user._id == page.page.user && (
               // add edit page link
@@ -114,7 +100,6 @@ const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
                   subPosts,
                   adopted,
                   date,
-                  tags,
                   page,
                 },
                 index
@@ -131,7 +116,6 @@ const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
                     subPosts={subPosts.length}
                     adopted={adopted}
                     date={date}
-                    tags={tags}
                     pageId={page}
                   ></Post>
                 );
@@ -146,7 +130,7 @@ const Page = ({ getPageById, getPostById, page, auth, match, setAlert }) => {
 
 Page.propTypes = {
   getPageById: PropTypes.func.isRequired,
-  getPostById: PropTypes.func.isRequired,
+  getPostByPageId: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
@@ -157,6 +141,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getPageById, getPostById, setAlert })(
-  Page
-);
+export default connect(mapStateToProps, {
+  getPageById,
+  getPostByPageId,
+  setAlert,
+})(Page);
