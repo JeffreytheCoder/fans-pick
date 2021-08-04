@@ -22,7 +22,8 @@ router.post(
     }
 
     try {
-      const { name, bio, avatar, links, categories, fansName } = req.body;
+      const { name, bio, avatar, links, categories, fansName, sections } =
+        req.body;
 
       // normalize social fields to ensure valid url
       for (const [key, value] of Object.entries(links)) {
@@ -39,6 +40,7 @@ router.post(
         links,
         categories,
         fansName,
+        sections,
         user: req.user.id,
       });
       await page.save();
@@ -184,6 +186,29 @@ router.put('/follow/:page_id', auth, async (req, res) => {
     await user.save();
 
     res.json({ user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// TODO: unfollow page
+
+// @route    GET api/pages/:page_id/posts
+// @desc     get posts of a page
+// @access   Public
+router.get('/:page_id/posts', async (req, res) => {
+  try {
+    const { section, sorting, order } = req.body;
+
+    // check if page exists
+    const page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ errors: [{ msg: 'Page does not exist' }] });
+    }
+
+    // check if section exists
+    // if (!page.sections.includes)
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

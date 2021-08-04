@@ -28,6 +28,15 @@ const PageSchema = new mongoose.Schema({
     {
       name: {
         type: String,
+        required: true,
+      },
+      isAdopt: {
+        type: Boolean,
+        default: false,
+      },
+      isAnswered: {
+        type: Boolean,
+        default: false,
       },
       posts: [
         {
