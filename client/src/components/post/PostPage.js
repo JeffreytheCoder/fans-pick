@@ -8,30 +8,49 @@ import { setAlert } from '../../actions/alert';
 import DetailedPost from './DetailedPost';
 
 const PostPage = ({ setAlert, match }) => {
-  // const [post, setPost] = useState(null);
+  const [postLoading, setPostLoading] = useState(true);
+  const [post, setPost] = useState(null);
 
-  // useEffect(async () => {
-  //   await getPageById(match.params.post_id);
-  // }, [match.params.post_id]);
+  const getPostById = async (postId) => {
+    try {
+      const res = await axios.get('/api/posts/' + postId);
+      setPost(res.data.post);
+      setPostLoading(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const getPageById = async (postId) => {
-  //   try {
-  //     const res = await axios.get(`/api/posts/${postId}`);
-  //     console.log(res.data);
-  //     setPost(res.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //     setAlert(err.response.statusText);
-  //   }
-  // };
+  useEffect(async () => {
+    await getPostById(match.params.post_id);
+  }, [match.params.post_id]);
 
   return (
-    <div class="flex justify-center font-main">
-      <div class="flex flex-col w-4/5">
-        <DetailedPost />
-        <span class="text-xl ml-6">4 comments</span>
-      </div>
-    </div>
+    <Fragment>
+      {postLoading ? (
+        <Spinner />
+      ) : (
+        <div class="flex justify-center font-main">
+          <div class="flex flex-col w-4/5">
+            <DetailedPost
+              postId={post.postId}
+              title={post.title ? post.title : ''}
+              description={post.description}
+              avatar={post.avatar}
+              username={post.username}
+              upvotes={post.likes.length}
+              adopted={post.adopted}
+              date={post.date}
+            />
+            <span class="text-xl ml-6">
+              {post.subPosts.length == 0
+                ? 'No comments yet, come post the first one!'
+                : `${post.subPosts.length} comments`}
+            </span>
+          </div>
+        </div>
+      )}
+    </Fragment>
   );
 };
 

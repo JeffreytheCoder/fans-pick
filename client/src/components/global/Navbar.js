@@ -40,20 +40,7 @@ const Navbar = ({ auth }) => {
           hideMenu ? 'hidden' : ''
         }`}
       >
-        <div class="text-lg lg:flex-grow">
-          <Link
-            to="/my-pages"
-            class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-green-500 mr-6"
-          >
-            My pages
-          </Link>
-          <Link
-            to="/following"
-            class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-green-500 mr-6"
-          >
-            Following
-          </Link>
-        </div>
+        <div class="text-lg lg:flex-grow"></div>
 
         <div class="flex flex-row items-center mt-4 lg:mt-0">
           {/* <Link
@@ -64,6 +51,18 @@ const Navbar = ({ auth }) => {
               ? 'Suggest Yours'
               : 'Create Page'}
           </Link> */}
+          <Link
+            to="/my-pages"
+            class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-green-500 mr-6"
+          >
+            My pages
+          </Link>
+          <Link
+            to="/following"
+            class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-green-500 mr-8"
+          >
+            Following
+          </Link>
           <button>
             <img
               class="rounded-full mr-3 h-12 w-12"

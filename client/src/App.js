@@ -41,7 +41,7 @@ const App = () => {
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
           <PrivateRoute exact path="/page/:page_id" component={Page} />
-          <PrivateRoute exact path="/post/:id" component={Page} />
+          <PrivateRoute exact path="/post/:post_id" component={PostPage} />
           {/* <Route exact path="/create-page" component={CreatePage} /> */}
           {/* <Route exact path='/my-pages' component={MyPages} />
           <Route exact path='/following' component={Following} />
