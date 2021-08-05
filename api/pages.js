@@ -103,7 +103,6 @@ router.put(
         links,
         categories,
         fansName,
-        sections,
       };
 
       // update page
@@ -296,10 +295,10 @@ router.get('/:page_id/posts', async (req, res) => {
   }
 });
 
-// @route    PUT api/pages/follow/:page_id
+// @route    PUT api/pages/:page_id/follow
 // @desc     current user follows a page
 // @access   Private
-router.put('/follow/:page_id', auth, async (req, res) => {
+router.put('/:page_id/follow', auth, async (req, res) => {
   try {
     // check if the page exists
     let page = await Page.findById(req.params.page_id);
@@ -325,5 +324,95 @@ router.put('/follow/:page_id', auth, async (req, res) => {
 });
 
 // TODO: unfollow page
+
+// @route    PUT api/pages/:page_id/sections/add
+// @desc     add section to a page
+// @access   Private
+router.put('/:page_id/sections/add', auth, async (req, res) => {
+  try {
+    // check if the page exists
+    let page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ msg: 'Page does not exist' });
+    }
+
+    // check if user is the page owner
+    if (page.user.toString() !== req.user.id) {
+      return res
+        .status(401)
+        .json({ msg: 'User is not the page owner, not authorized' });
+    }
+
+    const { section } = req.body;
+
+    // check if section already exists
+    let isSectionExists = false;
+    page.sections.forEach((sec) => {
+      if (sec.name === section.name) {
+        isSectionExists = true;
+      }
+    });
+
+    if (isSectionExists) {
+      return res.status(400).json({ msg: 'Section already exists' });
+    }
+
+    // add section to current sections
+    page.sections.unshift(section);
+    page.save();
+
+    res.json({ page });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route    DELETE api/pages/:page_id/sections/delete/:section_id
+// @desc     delete section from a page
+// @access   Private
+router.delete(
+  '/:page_id/sections/delete/:section_id',
+  auth,
+  async (req, res) => {
+    try {
+      // check if the page exists
+      let page = await Page.findById(req.params.page_id);
+      if (!page) {
+        return res.status(400).json({ msg: 'Page does not exist' });
+      }
+
+      // check if user is the page owner
+      if (page.user.toString() !== req.user.id) {
+        return res
+          .status(401)
+          .json({ msg: 'User is not the page owner, not authorized' });
+      }
+
+      // check if section doesn't exists
+      let isSectionExists = false;
+      page.sections.forEach((sec) => {
+        if (sec._id.toString() === req.params.section_id.toString()) {
+          isSectionExists = true;
+        }
+      });
+
+      if (!isSectionExists) {
+        return res.status(400).json({ msg: 'Section does not exists' });
+      }
+
+      // add section to current sections
+      page.sections = page.sections.filter((sec) => {
+        return sec._id.toString() !== req.params.section_id.toString();
+      });
+      page.save();
+
+      res.json({ page });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
 
 module.exports = router;

@@ -147,7 +147,7 @@ router.delete('/:post_id', auth, async (req, res) => {
     const page = await Page.findById(post.page);
     page.sections.forEach((sec) => {
       if (sec.name === post.section) {
-        sec.posts.filter(
+        sec.posts = sec.posts.filter(
           (secPost) => secPost._id.toString() !== post._id.toString()
         );
       }
@@ -157,7 +157,7 @@ router.delete('/:post_id', auth, async (req, res) => {
     // remove post from superpost's subposts
     if (post.superPost) {
       const superPost = await Post.findById(post.superPost.id);
-      superPost.subPosts.filter(
+      superPost.subPosts = superPost.subPosts.filter(
         (subPost) => subPost._id.toString() !== req.params.post_id.toString()
       );
       superPost.save();

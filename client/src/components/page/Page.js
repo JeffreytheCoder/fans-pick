@@ -41,7 +41,7 @@ const Page = ({
 
   const followPage = async () => {
     try {
-      const res = await axios.put(`/api/pages/follow/${page.page._id}`);
+      const res = await axios.put(`/api/pages/${page.page._id}/follow`);
       console.log(res.data);
     } catch (err) {
       console.log(err);
@@ -125,7 +125,7 @@ const Page = ({
                   >
                     <span
                       key="index"
-                      class={`text-xl px-4 py-2 rounded mr-4 ${
+                      class={`text-xl px-4 py-2 rounded mr-4 capitalize ${
                         sec.name === section
                           ? 'bg-gray-400 text-black font-bold'
                           : 'bg-gray-200 text-gray-600 font-semibold hover:bg-gray-400 hover:text-gray-800 hover:font-bold hover-transition'
