@@ -146,9 +146,9 @@ router.delete('/:page_id', auth, async (req, res) => {
     await user.save();
 
     // remove posts in every section
-    page.sections.forEach((sec) => {
+    page.sections.forEach(async (sec) => {
       sec.posts.forEach(async (secPost) => {
-        const post = await Post.findById(secPost._id);
+        const post = await Post.findById(secPost._id.toString());
         await post.remove();
       });
     });
@@ -264,20 +264,24 @@ router.get('/:page_id/posts', async (req, res) => {
       if (sorting === 'date') {
         posts = await Post.find({
           page: req.params.page_id,
+          section: { $ne: 'subposts' },
         }).sort({ date: order });
       } else if (sorting === 'likes') {
         posts = await Post.find({
           page: req.params.page_id,
+          section: { $ne: 'subposts' },
         }).sort({ likes: order });
       } else if (sorting === 'adopted') {
         if (order == 'true') {
           posts = await Post.find({
             page: req.params.page_id,
+            section: { $ne: 'subposts' },
             adopted: true,
           }).sort({ date: 'desc' });
         } else {
           posts = await Post.find({
             page: req.params.page_id,
+            section: { $ne: 'subposts' },
             adopted: false,
           }).sort({ date: 'desc' });
         }
@@ -285,7 +289,10 @@ router.get('/:page_id/posts', async (req, res) => {
     } else if (section) {
       posts = await Post.find({ page: req.params.page_id, section });
     } else {
-      posts = await Post.find({ page: req.params.page_id });
+      posts = await Post.find({
+        page: req.params.page_id,
+        section: { $ne: 'subposts' },
+      });
     }
 
     res.json({ posts });
@@ -401,7 +408,17 @@ router.delete(
         return res.status(400).json({ msg: 'Section does not exists' });
       }
 
-      // add section to current sections
+      // delete all posts in the section
+      page.sections.forEach(async (sec) => {
+        if (sec._id.toString() === req.params.section_id.toString()) {
+          sec.posts.forEach(async (secPost) => {
+            const post = await Post.findById(secPost._id.toString());
+            await post.remove();
+          });
+        }
+      });
+
+      // remove section from sections
       page.sections = page.sections.filter((sec) => {
         return sec._id.toString() !== req.params.section_id.toString();
       });

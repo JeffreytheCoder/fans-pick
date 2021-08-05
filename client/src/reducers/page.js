@@ -32,6 +32,7 @@ export default function (state = initialState, action) {
       };
 
     case GET_PAGE_POSTS:
+      state.posts = [];
       return {
         ...state,
         posts: payload.posts,

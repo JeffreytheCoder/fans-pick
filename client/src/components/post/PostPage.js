@@ -8,14 +8,31 @@ import { setAlert } from '../../actions/alert';
 import DetailedPost from './DetailedPost';
 
 const PostPage = ({ setAlert, match }) => {
-  const [postLoading, setPostLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
   const [post, setPost] = useState(null);
+  const [subPosts, setSubPosts] = useState([]);
 
   const getPostById = async (postId) => {
     try {
       const res = await axios.get('/api/posts/' + postId);
       setPost(res.data.post);
-      setPostLoading(false);
+      console.log(res.data.post);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getSubPosts = async () => {
+    try {
+      if (post.subPosts.length === 0) {
+        setPostsLoading(false);
+        console.log('loading done');
+      } else {
+        post.subPosts.forEach(async (subPost) => {
+          const res = await axios.get('/api/posts/' + subPost._id);
+          setSubPosts([...subPosts, res.data.post]);
+        });
+      }
     } catch (err) {
       console.error(err);
     }
@@ -25,16 +42,32 @@ const PostPage = ({ setAlert, match }) => {
     await getPostById(match.params.post_id);
   }, [match.params.post_id]);
 
+  useEffect(async () => {
+    if (post) {
+      await getSubPosts();
+      console.log('getting sub posts');
+    }
+  }, [post]);
+
+  useEffect(async () => {
+    if (subPosts) {
+      if (subPosts.length === post.subPosts.length) {
+        setPostsLoading(false);
+        console.log('loading done');
+      }
+    }
+  }, [subPosts]);
+
   return (
     <Fragment>
-      {postLoading ? (
+      {postsLoading ? (
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
           <div class="flex flex-col w-4/5">
             <DetailedPost
               postId={post.postId}
-              title={post.title ? post.title : ''}
+              title={post.title}
               description={post.description}
               avatar={post.avatar}
               username={post.username}
@@ -47,6 +80,20 @@ const PostPage = ({ setAlert, match }) => {
                 ? 'No comments yet, come post the first one!'
                 : `${post.subPosts.length} comments`}
             </span>
+            {subPosts.map((subPost) => {
+              return (
+                <DetailedPost
+                  postId={subPost.postId}
+                  title=""
+                  description={subPost.description}
+                  avatar={subPost.avatar}
+                  username={subPost.username}
+                  upvotes={subPost.likes.length}
+                  adopted={subPost.adopted}
+                  date={subPost.date}
+                />
+              );
+            })}
           </div>
         </div>
       )}

@@ -129,7 +129,7 @@ const DetailedPost = ({
         <div class="flex text-xl leading-relaxed mb-2">{description}</div>
 
         <div class="flex flex-row -ml-4 text-lg">
-          {isPageOwner ? (
+          {title && isPageOwner ? (
             adopted ? (
               <button class="z-10">
                 <div class="flex flex-row items-center justify-center mr-4">
@@ -171,7 +171,7 @@ const DetailedPost = ({
                 </div>
               </button>
             )
-          ) : adopted ? (
+          ) : title && adopted ? (
             <div class="flex flex-row">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

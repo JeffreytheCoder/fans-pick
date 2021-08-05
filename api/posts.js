@@ -67,6 +67,7 @@ router.post(
       // add post to subposts of the superpost
       if (superpost_id) {
         const superPost = await Post.findById(superpost_id);
+        console.log(superPost);
         superPost.subPosts.unshift(post);
         await superPost.save();
       }
