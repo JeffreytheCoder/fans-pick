@@ -5,27 +5,35 @@ import axios from 'axios';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
+import DetailedPost from './DetailedPost';
 
-function PostPage({ setAlert, match }) {
-  const [post, setPost] = useState(null);
+const PostPage = ({ setAlert, match }) => {
+  // const [post, setPost] = useState(null);
 
-  useEffect(async () => {
-    await getPageById(match.params.post_id);
-  }, [match.params.post_id]);
+  // useEffect(async () => {
+  //   await getPageById(match.params.post_id);
+  // }, [match.params.post_id]);
 
-  const getPageById = async (postId) => {
-    try {
-      const res = await axios.get(`/api/posts/${postId}`);
-      console.log(res.data);
-      setPost(res.data);
-    } catch (err) {
-      console.log(err);
-      setAlert(err.response.statusText);
-    }
-  };
+  // const getPageById = async (postId) => {
+  //   try {
+  //     const res = await axios.get(`/api/posts/${postId}`);
+  //     console.log(res.data);
+  //     setPost(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //     setAlert(err.response.statusText);
+  //   }
+  // };
 
-  return <div></div>;
-}
+  return (
+    <div class="flex justify-center font-main">
+      <div class="flex flex-col w-4/5">
+        <DetailedPost />
+        <span class="text-xl ml-6">4 comments</span>
+      </div>
+    </div>
+  );
+};
 
 PostPage.propTypes = {
   setAlert: PropTypes.func.isRequired,
