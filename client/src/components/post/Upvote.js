@@ -8,11 +8,16 @@ import { setAlert } from '../../actions/alert';
 const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
+  const [upvoteChange, setUpvoteChange] = useState(0);
 
   const upvotePost = async () => {
     try {
       const res = await axios.put(`/api/posts/like/${postId}`);
       setUpvoted(!upvoted);
+      if (downvoted) {
+        setDownvoted(false);
+      }
+      setUpvoteChange(1);
     } catch (err) {
       console.log(err);
       setAlert(err.response.data.msg, 'danger');
@@ -23,6 +28,10 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
     try {
       const res = await axios.put(`/api/posts/unlike/${postId}`);
       setDownvoted(!downvoted);
+      if (upvoted) {
+        setUpvoted(false);
+      }
+      setUpvoteChange(-1);
     } catch (err) {
       setAlert(err.response.data.msg, 'danger');
     }
@@ -72,7 +81,9 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
         </svg>
       </button>
       <span class="font-semibold text-lg">
-        {upvotes && downvotes ? upvotes.length - downvotes.length : 0}
+        {upvotes && downvotes
+          ? upvotes.length - downvotes.length + upvoteChange
+          : upvoteChange}
       </span>
       <button onClick={() => downvotePost()}>
         <svg

@@ -231,7 +231,7 @@ router.put('/like/:post_id', auth, async (req, res) => {
     }
 
     // remove from unlike if exists
-    post.unlikeds = post.unlikes.filter(
+    post.unlikes = post.unlikes.filter(
       (unlike) => unlike.user.toString() !== req.user.id
     );
 
