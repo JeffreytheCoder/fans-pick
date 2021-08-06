@@ -15,7 +15,7 @@ const subpostReducer = (state, action) => {
   }
 };
 
-const PostPage = ({ page, getSubPosts, setAlert, match }) => {
+const PostPage = ({ page, getSubPosts, getSubSubPosts, setAlert, match }) => {
   const [post, setPost] = useState(null);
 
   useEffect(async () => {
@@ -29,13 +29,13 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
     }
   }, post);
 
-  // useEffect(async () => {
-  //   console.log(page.subPosts);
-  //   if (post && page.subPosts.length === post.subPosts.length) {
-  //     console.log('getting sub sub posts');
-  //     await getSubSubPosts(page.subPosts);
-  //   }
-  // }, page.subPosts.length);
+  useEffect(async () => {
+    console.log(page.subPosts);
+    if (post && page.subPosts.length === post.subPosts.length) {
+      console.log('getting sub sub posts');
+      await getSubSubPosts(page.subPosts);
+    }
+  }, [page.subPosts]);
 
   const getPostById = async (postId) => {
     try {
@@ -48,7 +48,7 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
 
   return (
     <Fragment>
-      {page.subPostsLoading ? (
+      {page.subPostsLoading && page.subSubPostsLoading ? (
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
@@ -65,9 +65,9 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
               date={post.date}
             />
             <span class="text-xl ml-6 mb-6">
-              {post.subPosts.length == 0
+              {page.subPosts.length == 0
                 ? 'No comments yet, come post the first one!'
-                : `${post.subPosts.length} comments`}
+                : `${page.subPosts.length} comments`}
             </span>
             {page.subPosts.map((subPost, index) => {
               return (
@@ -84,7 +84,7 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
                     adopted={subPost.adopted}
                     date={subPost.date}
                   />
-                  {/* {subSubPosts[Number(index)].map((subSubPost, subIndex) => {
+                  {/* {page.subSubPosts[index].map((subSubPost, subIndex) => {
                     return (
                       <Fragment>
                         <DetailedPost
@@ -131,3 +131,23 @@ export default connect(mapStateToProps, {
   getSubPosts,
   getSubSubPosts,
 })(PostPage);
+
+// subSubPosts.map((subSubPost, subIndex) => {
+//   return (
+//     <Fragment>
+//       <DetailedPost
+//         key={subIndex}
+//         postId={subSubPost._id}
+//         title=""
+//         description={subSubPost.description}
+//         avatar={subSubPost.avatar}
+//         username={subSubPost.username}
+//         upvotes={subSubPost.likes}
+//         downvotes={subSubPost.unlikes}
+//         adopted={subSubPost.adopted}
+//         date={subSubPost.date}
+//         isSubSubPost={true}
+//       />
+//     </Fragment>
+//   );
+// });

@@ -47,14 +47,18 @@ export const getPostById = (postId) => async (dispatch) => {
 
 export const getSubPosts = (subPostIds) => async (dispatch) => {
   try {
-    subPostIds.forEach(async (subPostId) => {
-      const res = await axios.get(`/api/posts/${subPostId._id}`);
-      const subPost = res.data.post;
+    let subPosts = [];
 
-      dispatch({
-        type: GET_SUBPOST,
-        payload: subPost,
-      });
+    await Promise.all(
+      subPostIds.map(async (subPostId) => {
+        const res = await axios.get(`/api/posts/${subPostId._id}`);
+        subPosts.push(res.data.post);
+      })
+    );
+
+    dispatch({
+      type: GET_SUBPOST,
+      payload: subPosts,
     });
   } catch (err) {
     console.error(err);
@@ -67,22 +71,26 @@ export const getSubPosts = (subPostIds) => async (dispatch) => {
 
 export const getSubSubPosts = (subPosts) => async (dispatch) => {
   try {
-    subPosts.forEach(async (subPost) => {
-      const subSubPosts = [];
-      subPost.subPosts.forEach(async (subSubPostId) => {
-        console.log(subSubPostId);
-        const res = await axios.get(`/api/posts/${subSubPostId._id}`);
-        subSubPosts.unshift(res.data.post);
-        console.log(res.data.post);
-      });
-      console.log(subSubPosts);
-      dispatch({
-        type: GET_SUBSUBPOST,
-        payload: subPost,
-      });
-    });
+    await Promise.all(
+      subPosts.map(async (subPost) => {
+        let subSubPosts = [];
+
+        // append each subsubspost into subpost's array
+        await Promise.all(
+          subPost.subPosts.map(async (subSubPostId) => {
+            const res = await axios.get(`/api/posts/${subSubPostId._id}`);
+            subSubPosts.push(res.data.post);
+          })
+        );
+
+        dispatch({
+          type: GET_SUBSUBPOST,
+          payload: subSubPosts,
+        });
+      })
+    );
   } catch (err) {
-    console.error(err);
+    console.log(err);
     // dispatch({
     //   type: POST_ERROR,
     //   payload: { msg: err.response.statusText, status: err.response.status },

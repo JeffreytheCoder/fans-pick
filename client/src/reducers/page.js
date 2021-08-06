@@ -16,6 +16,7 @@ const initialState = {
   pageLoading: true,
   postsLoading: true,
   subPostsLoading: true,
+  subSubPostsLoading: true,
   subPosts: [],
   subSubPosts: [],
 };
@@ -48,7 +49,7 @@ export default function (state = initialState, action) {
     case GET_SUBPOST:
       return {
         ...state,
-        subPosts: [...state.subPosts, payload],
+        subPosts: payload,
         subPostsLoading: false,
       };
 
@@ -56,7 +57,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         subSubPosts: [...state.subSubPosts, payload],
-        // subPostsLoading: false,
+        subSubPostsLoading: false,
       };
 
     case PAGE_ERROR:

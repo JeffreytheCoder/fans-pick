@@ -71,7 +71,9 @@ const DetailedPost = ({
           {title}
         </div>
 
-        <div class="flex text-xl leading-relaxed mb-2">{description}</div>
+        <div class={`flex text-xl leading-relaxed ${title ? 'mb-2' : 'mb-8'}`}>
+          {description}
+        </div>
 
         <div class="flex flex-row -ml-4 text-lg">
           {title && isPageOwner ? (
@@ -137,7 +139,11 @@ const DetailedPost = ({
           ) : (
             <div></div>
           )}
-          <div class="flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold">
+          <div
+            class={`flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
+              title ? '' : 'hidden'
+            }`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-7 w-7"
@@ -154,7 +160,11 @@ const DetailedPost = ({
             </svg>
             <span class="ml-2">Comment</span>
           </div>
-          <div class="flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold">
+          <div
+            class={`flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
+              title ? '' : 'hidden'
+            }`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"

@@ -30,8 +30,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
 
   // check if already upvoted or downvoted
   useEffect(async () => {
-    if (auth.isAuthenticated) {
-      console.log(upvotes);
+    if (upvotes && auth.isAuthenticated) {
       upvotes.forEach((upvote) => {
         if (upvote.user === auth.user._id) {
           setUpvoted(true);
@@ -41,8 +40,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
   }, [upvotes, auth]);
 
   useEffect(async () => {
-    if (auth.isAuthenticated) {
-      console.log(downvotes);
+    if (downvotes && auth.isAuthenticated) {
       downvotes.forEach((downvote) => {
         if (downvote.user === auth.user._id) {
           setDownvoted(true);
@@ -74,7 +72,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
         </svg>
       </button>
       <span class="font-semibold text-lg">
-        {upvotes.length - downvotes.length}
+        {upvotes && downvotes ? upvotes.length - downvotes.length : 0}
       </span>
       <button onClick={() => downvotePost()}>
         <svg

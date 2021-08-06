@@ -409,14 +409,16 @@ router.delete(
       }
 
       // delete all posts in the section
-      page.sections.forEach(async (sec) => {
-        if (sec._id.toString() === req.params.section_id.toString()) {
-          sec.posts.forEach(async (secPost) => {
-            const post = await Post.findById(secPost._id.toString());
-            await post.remove();
-          });
-        }
-      });
+      await Promise.all(
+        page.sections.map(async (sec) => {
+          if (sec._id.toString() === req.params.section_id.toString()) {
+            sec.posts.forEach(async (secPost) => {
+              const post = await Post.findById(secPost._id.toString());
+              await post.remove();
+            });
+          }
+        })
+      );
 
       // remove section from sections
       page.sections = page.sections.filter((sec) => {
