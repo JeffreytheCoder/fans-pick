@@ -203,11 +203,13 @@ router.get('/:post_id/subposts', async (req, res) => {
 
     // get its subposts
     let subposts = ['test'];
-    post.subPosts.forEach(async (subPost) => {
-      const postTemp = await Post.findById(subPost._id);
-      subposts.unshift(postTemp);
-      console.log(subposts);
-    });
+    await Promise.all(
+      post.subPosts.map(async (subPost) => {
+        const postTemp = await Post.findById(subPost._id);
+        subposts.unshift(postTemp);
+        console.log(subposts);
+      })
+    );
 
     res.json({ subposts: subposts });
   } catch {

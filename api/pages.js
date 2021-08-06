@@ -146,12 +146,14 @@ router.delete('/:page_id', auth, async (req, res) => {
     await user.save();
 
     // remove posts in every section
-    page.sections.forEach(async (sec) => {
-      sec.posts.forEach(async (secPost) => {
-        const post = await Post.findById(secPost._id.toString());
-        await post.remove();
-      });
-    });
+    await Promise.all(
+      page.sections.map(async (sec) => {
+        sec.posts.forEach(async (secPost) => {
+          const post = await Post.findById(secPost._id.toString());
+          await post.remove();
+        });
+      })
+    );
 
     // TODO: remove every subposts recursively
 
@@ -412,10 +414,12 @@ router.delete(
       await Promise.all(
         page.sections.map(async (sec) => {
           if (sec._id.toString() === req.params.section_id.toString()) {
-            sec.posts.forEach(async (secPost) => {
-              const post = await Post.findById(secPost._id.toString());
-              await post.remove();
-            });
+            await Promise.all(
+              sec.posts.map(async (secPost) => {
+                const post = await Post.findById(secPost._id.toString());
+                await post.remove();
+              })
+            );
           }
         })
       );
