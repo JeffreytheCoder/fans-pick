@@ -304,10 +304,10 @@ router.get('/:page_id/posts', async (req, res) => {
   }
 });
 
-// @route    PUT api/pages/:page_id/follow
+// @route    PUT api/pages/follow/:page_id
 // @desc     current user follows a page
 // @access   Private
-router.put('/:page_id/follow', auth, async (req, res) => {
+router.put('/follow/:page_id', auth, async (req, res) => {
   try {
     // check if the page exists
     let page = await Page.findById(req.params.page_id);
@@ -316,6 +316,13 @@ router.put('/:page_id/follow', auth, async (req, res) => {
     }
 
     const user = await User.findById(req.user.id);
+
+    // check if already followed
+    if (
+      page.followers.some((follower) => follower._id.toString() === req.user.id)
+    ) {
+      return res.status(400).json({ msg: 'Already followed this page' });
+    }
 
     // add follower to the page
     page.followers.unshift(user);
@@ -332,7 +339,46 @@ router.put('/:page_id/follow', auth, async (req, res) => {
   }
 });
 
-// TODO: unfollow page
+// @route    PUT api/pages/unfollow/:page_id
+// @desc     current user unfollows a page
+// @access   Private
+router.put('/unfollow/:page_id', auth, async (req, res) => {
+  try {
+    // check if the page exists
+    let page = await Page.findById(req.params.page_id);
+    if (!page) {
+      return res.status(400).json({ msg: 'Page does not exist' });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    // check if not already followed
+    if (
+      !page.followers.some(
+        (follower) => follower._id.toString() === req.user.id
+      )
+    ) {
+      return res.status(400).json({ msg: 'Did not followed this page' });
+    }
+
+    // remove follower from the page
+    page.followers = page.followers.filter(
+      (follower) => follower._id.toString() !== req.user.id
+    );
+    await page.save();
+
+    // remove following page from the user
+    user.follows = user.follows.filter((follow) => {
+      return follow._id.toString() !== page._id.toString();
+    });
+    await user.save();
+
+    res.json({ user });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
 
 // @route    PUT api/pages/:page_id/sections/add
 // @desc     add section to a page

@@ -42,7 +42,7 @@ const Navbar = ({ auth }) => {
       >
         <div class="text-lg lg:flex-grow"></div>
 
-        <div class="flex flex-row items-center mt-4 lg:mt-0">
+        <div class="text-lg flex flex-row items-center mt-4 lg:mt-0">
           {/* <Link
             to="/post"
             class="inline-block text-lg px-4 py-3 leading-none rounded border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 mr-6"

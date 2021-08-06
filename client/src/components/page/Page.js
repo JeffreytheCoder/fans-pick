@@ -21,6 +21,7 @@ const Page = ({
   const [sorting, setSorting] = useState('date');
   const [order, setOrder] = useState('desc');
   const [filterClicked, setFilterClicked] = useState(false);
+  const [followed, setFollowed] = useState(false);
 
   useEffect(async () => {
     await getPageById(match.params.page_id);
@@ -30,22 +31,37 @@ const Page = ({
     await getPostByPageId(match.params.page_id, section, sorting, order);
   }, [match.params.page_id, section, sorting, order]);
 
-  const isUserFollowed = () => {
-    page.page.followers.forEach((follower) => {
-      if (follower._id == auth.user._id) {
-        return true;
+  useEffect(() => {
+    if (page.page && auth.isAuthenticated) {
+      if (
+        auth.user.follows.some(
+          (follow) => follow._id.toString() == page.page._id.toString()
+        )
+      ) {
+        setFollowed(true);
       }
-    });
-    return false;
-  };
+    }
+  }, [page.page, auth.isAuthenticated]);
 
   const followPage = async () => {
     try {
-      const res = await axios.put(`/api/pages/${page.page._id}/follow`);
+      const res = await axios.put(`/api/pages/follow/${page.page._id}`);
+      setFollowed(true);
       console.log(res.data);
     } catch (err) {
       console.log(err);
-      setAlert(err.response.statusText);
+      setAlert(err.response.msg, 'danger');
+    }
+  };
+
+  const unfollowPage = async () => {
+    try {
+      const res = await axios.put(`/api/pages/unfollow/${page.page._id}`);
+      setFollowed(false);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+      setAlert(err.response.msg, 'danger');
     }
   };
 
@@ -72,8 +88,11 @@ const Page = ({
 
             <div class="flex flex-row items-center justify-center mt-4 mb-3">
               <div class="text-2xl font-bold"> {page.page.name} </div>
-              {isUserFollowed ? (
-                <button class="btn rounded-full py-1.5 bg-green-500 text-white  hover-transition">
+              {followed ? (
+                <button
+                  class="btn rounded-full py-1.5 bg-green-500 text-white  hover-transition"
+                  onClick={() => unfollowPage()}
+                >
                   Joined{' '}
                 </button>
               ) : (
