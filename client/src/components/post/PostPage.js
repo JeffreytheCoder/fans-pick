@@ -5,13 +5,30 @@ import axios from 'axios';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
+import { getSubPosts } from '../../actions/page';
 import DetailedPost from './DetailedPost';
 
-const PostPage = ({ setAlert, match }) => {
-  const [postsLoading, setPostsLoading] = useState(true);
+const subpostReducer = (state, action) => {
+  switch (action.type) {
+    case 'append':
+      return [...state, action.payload];
+  }
+};
+
+const PostPage = ({ page, getSubPosts, setAlert, match }) => {
   const [post, setPost] = useState(null);
-  const [subPosts, setSubPosts] = useState([]);
-  const [subSubPosts, setSubSubPosts] = useState([]);
+
+  useEffect(async () => {
+    await getPostById(match.params.post_id);
+  }, [match.params.post_id]);
+
+  useEffect(async () => {
+    console.log(post);
+    if (post) {
+      console.log('getting sub posts');
+      await getSubPosts(post.subPosts);
+    }
+  }, post);
 
   const getPostById = async (postId) => {
     try {
@@ -22,71 +39,9 @@ const PostPage = ({ setAlert, match }) => {
     }
   };
 
-  const getSubPosts = async () => {
-    try {
-      if (post.subPosts.length === 0) {
-        setPostsLoading(false);
-        console.log('no subpost, loading done');
-      } else {
-        post.subPosts.forEach(async (subPost) => {
-          const res = await axios.get('/api/posts/' + subPost._id);
-          setSubPosts([...subPosts, res.data.post]);
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const getSubSubPosts = async () => {
-    try {
-      subPosts.forEach(async (subPost) => {
-        const newPosts = [];
-        subPost.subPosts.forEach(async (subSubPost) => {
-          const res = await axios.get('/api/posts/' + subSubPost._id);
-          newPosts.unshift(res.data.post);
-        });
-        setSubSubPosts([...subSubPosts, newPosts]);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(async () => {
-    await getPostById(match.params.post_id);
-  }, [match.params.post_id]);
-
-  useEffect(async () => {
-    if (post) {
-      console.log('getting sub posts');
-      await getSubPosts();
-    }
-  }, [post]);
-
-  useEffect(async () => {
-    if (post && post.subPosts.length === subPosts.length) {
-      if (subPosts.length === post.subPosts.length) {
-        console.log('getting sub sub posts');
-        await getSubSubPosts();
-      }
-    }
-  }, [subPosts]);
-
-  useEffect(async () => {
-    if (post) {
-      if (subSubPosts.length === subPosts.length) {
-        // console.log(post);
-        // console.log(subPosts);
-        // console.log(subSubPosts);
-        setPostsLoading(false);
-      }
-    }
-  }, [subSubPosts]);
-
   return (
     <Fragment>
-      {postsLoading ? (
+      {page.subPostsLoading ? (
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
@@ -98,6 +53,7 @@ const PostPage = ({ setAlert, match }) => {
               avatar={post.avatar}
               username={post.username}
               upvotes={post.likes}
+              downvotes={post.unlikes}
               adopted={post.adopted}
               date={post.date}
             />
@@ -106,7 +62,7 @@ const PostPage = ({ setAlert, match }) => {
                 ? 'No comments yet, come post the first one!'
                 : `${post.subPosts.length} comments`}
             </span>
-            {subPosts.map((subPost, index) => {
+            {page.subPosts.map((subPost, index) => {
               return (
                 <Fragment>
                   <DetailedPost
@@ -117,10 +73,11 @@ const PostPage = ({ setAlert, match }) => {
                     avatar={subPost.avatar}
                     username={subPost.username}
                     upvotes={subPost.likes}
+                    downvotes={subPost.unlikes}
                     adopted={subPost.adopted}
                     date={subPost.date}
                   />
-                  {subSubPosts[Number(index)].map((subSubPost, subIndex) => {
+                  {/* {subSubPosts[Number(index)].map((subSubPost, subIndex) => {
                     return (
                       <Fragment>
                         <DetailedPost
@@ -131,13 +88,14 @@ const PostPage = ({ setAlert, match }) => {
                           avatar={subSubPost.avatar}
                           username={subSubPost.username}
                           upvotes={subSubPost.likes}
+                          downvotes={subSubPost.unlikes}
                           adopted={subSubPost.adopted}
                           date={subSubPost.date}
                           isSubSubPost={true}
                         />
                       </Fragment>
                     );
-                  })}
+                  })} */}
                 </Fragment>
               );
             })}
@@ -149,7 +107,15 @@ const PostPage = ({ setAlert, match }) => {
 };
 
 PostPage.propTypes = {
+  getSubPosts: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
+  page: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
-export default connect(null, { setAlert })(PostPage);
+const mapStateToProps = (state) => ({
+  page: state.page,
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { setAlert, getSubPosts })(PostPage);

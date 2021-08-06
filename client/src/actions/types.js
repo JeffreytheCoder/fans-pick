@@ -18,3 +18,5 @@ export const GET_POST = 'GET_POST';
 export const POST_ERROR = 'POST_ERROR';
 export const GET_PAGE_POSTS = 'GET_PAGE_POSTS';
 export const PAGE_POSTS_ERROR = 'PAGE_POSTS_ERROR';
+export const GET_SUBPOST = 'GET_SUBPOST';
+export const SUBPOST_ERROR = 'SUBPOST_ERROR';

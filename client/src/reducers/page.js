@@ -5,6 +5,8 @@ import {
   POST_ERROR,
   GET_PAGE_POSTS,
   PAGE_POSTS_ERROR,
+  GET_SUBPOST,
+  SUBPOST_ERROR,
 } from '../actions/types';
 
 const initialState = {
@@ -12,6 +14,8 @@ const initialState = {
   posts: [],
   pageLoading: true,
   postsLoading: true,
+  subPostsLoading: true,
+  subPosts: [],
 };
 
 export default function (state = initialState, action) {
@@ -37,6 +41,13 @@ export default function (state = initialState, action) {
         ...state,
         posts: payload.posts,
         postsLoading: false,
+      };
+
+    case GET_SUBPOST:
+      return {
+        ...state,
+        subPosts: [...state.subPosts, payload.post],
+        subPostsLoading: false,
       };
 
     case PAGE_ERROR:

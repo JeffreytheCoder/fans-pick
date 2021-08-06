@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
+import Upvote from './Upvote';
 import { setAlert } from '../../actions/alert';
 
 const DetailedPost = ({
@@ -13,15 +14,14 @@ const DetailedPost = ({
   avatar,
   username,
   upvotes,
+  downvotes,
   adopted,
   date,
   pageId,
   auth,
   setAlert,
+  isSubSubPost = false,
 }) => {
-  const [upvoted, setUpvoted] = useState(false);
-  const [downvoted, setDownvoted] = useState(false);
-
   const isPageOwner = () => {
     auth.user.pages.forEach((page) => {
       if (page._id === pageId) {
@@ -35,72 +35,17 @@ const DetailedPost = ({
     try {
       const res = await axios.put(`/api/posts/adopt/${postId}`);
     } catch (err) {
-      setAlert(err.response.statusText);
       console.log(err);
     }
   };
 
   return (
-    <div class="flex flex-row font-main relative border-2 rounded mt-12 mb-6 px-8 pt-8">
-      <div class="flex flex-col items-center mr-8">
-        <button onClick={() => setUpvoted(!upvoted)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            class={`h-7 w-7 ${
-              upvoted
-                ? 'font-bold text-green-500'
-                : 'hover:text-green-500 hover-transition'
-            }`}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={`${upvoted ? 3 : 2}`}
-              d="M5 15l7-7 7 7"
-            />
-          </svg>
-        </button>
-        <span class="font-semibold text-lg">{upvotes}</span>
-        <button onClick={() => setDownvoted(!downvoted)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            class={`h-7 w-7 ${
-              downvoted
-                ? 'font-bold text-purple-600'
-                : 'hover:text-purple-600 hover-transition'
-            }`}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={`${downvoted ? 3 : 2}`}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-7 w-7 text-green-500 mt-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={4}
-            d="M5 13l4 4L19 7"
-          />
-        </svg> */}
-      </div>
-
+    <div
+      class={`flex flex-row font-main relative border-2 rounded ${
+        title ? 'mt-12' : ''
+      } ${isSubSubPost ? 'ml-12' : ''} mb-6 px-8 pt-8`}
+    >
+      <Upvote postId={postId} upvotes={upvotes} downvotes={downvotes} />
       <div class="flex flex-col">
         <div class="flex flex-row items-center mb-4 text-lg">
           <div class="flex">

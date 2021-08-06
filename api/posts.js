@@ -190,6 +190,32 @@ router.get('/:post_id', async (req, res) => {
   }
 });
 
+// @route    GET api/posts/:post_id/subposts
+// @desc     get subposts by post id
+// @access   Public
+router.get('/:post_id/subposts', async (req, res) => {
+  try {
+    // check if the post exists
+    let post = await Post.findById(req.params.post_id);
+    if (!post) {
+      return res.status(400).json({ msg: 'Post does not exist' });
+    }
+
+    // get its subposts
+    let subposts = ['test'];
+    post.subPosts.forEach(async (subPost) => {
+      const postTemp = await Post.findById(subPost._id);
+      subposts.unshift(postTemp);
+      console.log(subposts);
+    });
+
+    res.json({ subposts: subposts });
+  } catch {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route    PUT api/posts/like/:post_id
 // @desc     like a post
 // @access   Private
@@ -203,7 +229,9 @@ router.put('/like/:post_id', auth, async (req, res) => {
     }
 
     // remove from unlike if exists
-    post.unlikes.filter((unlike) => unlike.user.toString() !== req.user.id);
+    post.unlikeds = post.unlikes.filter(
+      (unlike) => unlike.user.toString() !== req.user.id
+    );
 
     post.likes.unshift({ user: req.user.id });
     await post.save();
@@ -227,10 +255,12 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'Post has not been liked yet' });
     }
 
-    // remove from unlike if exists
-    post.likes.filter((like) => like.user.toString() !== req.user.id);
+    // remove from like if exists
+    post.likes = post.likes.filter((like) => {
+      like.user.toString() !== req.user.id;
+    });
 
-    post.unlike.unshift({ user: req.user.id });
+    post.unlikes.unshift({ user: req.user.id });
     await post.save();
 
     res.json(post.likes);

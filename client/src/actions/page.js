@@ -7,6 +7,8 @@ import {
   POST_ERROR,
   GET_PAGE_POSTS,
   PAGE_POSTS_ERROR,
+  GET_SUBPOST,
+  SUBPOST_ERROR,
 } from './types';
 
 export const getPageById = (pageId) => async (dispatch) => {
@@ -42,15 +44,28 @@ export const getPostById = (postId) => async (dispatch) => {
   }
 };
 
+export const getSubPosts = (subPostIds) => async (dispatch) => {
+  try {
+    subPostIds.forEach(async (subPostId) => {
+      const res = await axios.get(`/api/posts/${subPostId._id}`);
+      console.log(res.data);
+      dispatch({
+        type: GET_SUBPOST,
+        payload: res.data,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    // dispatch({
+    //   type: POST_ERROR,
+    //   payload: { msg: err.response.statusText, status: err.response.status },
+    // });
+  }
+};
+
 export const getPostByPageId =
   (pageId, section, sorting, order) => async (dispatch) => {
     try {
-      // const config = {
-      //   headers: { 'Content-Type': 'application/json' },
-      // };
-
-      // const body = JSON.stringify({ section, sorting, order });
-
       const res = await axios.get(`/api/pages/${pageId}/posts`, {
         params: { section, sorting, order },
       });
