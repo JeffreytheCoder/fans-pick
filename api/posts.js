@@ -13,7 +13,6 @@ const User = require('../models/User');
 router.post(
   '/create',
   auth,
-  check('title', 'Title is required').not().isEmpty(),
   check('description', 'Description is required').not().isEmpty(),
   check('page_id', 'Page id is required').not().isEmpty(),
   check('section', 'Section is required').not().isEmpty(),
@@ -86,8 +85,8 @@ router.post(
 router.put(
   '/:post_id',
   auth,
-  check('title', 'Title is required').not().isEmpty(),
   check('description', 'Description is required').not().isEmpty(),
+  check('section', 'Section is required').not().isEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -200,7 +199,7 @@ router.put('/like/:post_id', auth, async (req, res) => {
 
     // check if already liked
     if (post.likes.some((like) => like.user.toString() === req.user.id)) {
-      res.status(400).json({ msg: 'Post already liked' });
+      return res.status(400).json({ msg: 'Post already liked' });
     }
 
     post.likes.unshift({ user: req.user.id });
@@ -222,7 +221,7 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
 
     // check if not liked
     if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
-      res.status(400).json({ msg: 'Post has not been liked yet' });
+      return res.status(400).json({ msg: 'Post has not been liked yet' });
     }
 
     // remove like by the user
