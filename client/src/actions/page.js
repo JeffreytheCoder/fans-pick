@@ -9,6 +9,7 @@ import {
   PAGE_POSTS_ERROR,
   GET_SUBPOST,
   SUBPOST_ERROR,
+  GET_SUBSUBPOST,
 } from './types';
 
 export const getPageById = (pageId) => async (dispatch) => {
@@ -48,10 +49,36 @@ export const getSubPosts = (subPostIds) => async (dispatch) => {
   try {
     subPostIds.forEach(async (subPostId) => {
       const res = await axios.get(`/api/posts/${subPostId._id}`);
-      console.log(res.data);
+      const subPost = res.data.post;
+
       dispatch({
         type: GET_SUBPOST,
-        payload: res.data,
+        payload: subPost,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    // dispatch({
+    //   type: POST_ERROR,
+    //   payload: { msg: err.response.statusText, status: err.response.status },
+    // });
+  }
+};
+
+export const getSubSubPosts = (subPosts) => async (dispatch) => {
+  try {
+    subPosts.forEach(async (subPost) => {
+      const subSubPosts = [];
+      subPost.subPosts.forEach(async (subSubPostId) => {
+        console.log(subSubPostId);
+        const res = await axios.get(`/api/posts/${subSubPostId._id}`);
+        subSubPosts.unshift(res.data.post);
+        console.log(res.data.post);
+      });
+      console.log(subSubPosts);
+      dispatch({
+        type: GET_SUBSUBPOST,
+        payload: subPost,
       });
     });
   } catch (err) {

@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
-import { getSubPosts } from '../../actions/page';
+import { getSubPosts, getSubSubPosts } from '../../actions/page';
 import DetailedPost from './DetailedPost';
 
 const subpostReducer = (state, action) => {
@@ -23,12 +23,19 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
   }, [match.params.post_id]);
 
   useEffect(async () => {
-    console.log(post);
     if (post) {
       console.log('getting sub posts');
       await getSubPosts(post.subPosts);
     }
   }, post);
+
+  // useEffect(async () => {
+  //   console.log(page.subPosts);
+  //   if (post && page.subPosts.length === post.subPosts.length) {
+  //     console.log('getting sub sub posts');
+  //     await getSubSubPosts(page.subPosts);
+  //   }
+  // }, page.subPosts.length);
 
   const getPostById = async (postId) => {
     try {
@@ -108,6 +115,7 @@ const PostPage = ({ page, getSubPosts, setAlert, match }) => {
 
 PostPage.propTypes = {
   getSubPosts: PropTypes.func.isRequired,
+  getSubSubPosts: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
@@ -118,4 +126,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { setAlert, getSubPosts })(PostPage);
+export default connect(mapStateToProps, {
+  setAlert,
+  getSubPosts,
+  getSubSubPosts,
+})(PostPage);
