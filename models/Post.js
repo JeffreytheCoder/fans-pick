@@ -32,6 +32,14 @@ const PostSchema = new mongoose.Schema({
       },
     },
   ],
+  unlikes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
+    },
+  ],
   subPosts: [
     {
       post: {

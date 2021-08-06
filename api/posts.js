@@ -202,6 +202,9 @@ router.put('/like/:post_id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'Post already liked' });
     }
 
+    // remove from unlike if exists
+    post.unlikes.filter((unlike) => unlike.user.toString() !== req.user.id);
+
     post.likes.unshift({ user: req.user.id });
     await post.save();
 
@@ -224,10 +227,10 @@ router.put('/unlike/:post_id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'Post has not been liked yet' });
     }
 
-    // remove like by the user
-    post.likes = post.likes.filter((like) => {
-      like.user.toString() !== req.user.id;
-    });
+    // remove from unlike if exists
+    post.likes.filter((like) => like.user.toString() !== req.user.id);
+
+    post.unlike.unshift({ user: req.user.id });
     await post.save();
 
     res.json(post.likes);
