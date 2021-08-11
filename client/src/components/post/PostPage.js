@@ -5,7 +5,7 @@ import axios from 'axios';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
-import { getSubPosts, getSubSubPosts } from '../../actions/page';
+import { getSubPosts, getSubSubPosts, cleanUp } from '../../actions/page';
 import DetailedPost from './DetailedPost';
 
 const subpostReducer = (state, action) => {
@@ -15,26 +15,56 @@ const subpostReducer = (state, action) => {
   }
 };
 
-const PostPage = ({ page, getSubPosts, getSubSubPosts, setAlert, match }) => {
+const PostPage = ({
+  page,
+  getSubPosts,
+  getSubSubPosts,
+  cleanUp,
+  setAlert,
+  match,
+}) => {
   const [post, setPost] = useState(null);
+
+  useEffect(() => {
+    console.log('rendered');
+    return function cleanup() {
+      console.log('cleaned up');
+      // page.post = null;
+      // page.subPosts = [];
+      // page.subPostsLoading = true;
+      cleanUp();
+    };
+  }, []);
 
   useEffect(async () => {
     await getPostById(match.params.post_id);
+    return function cleanup() {
+      console.log('cleaned up');
+    };
   }, [match.params.post_id]);
 
   useEffect(async () => {
+    console.log(post);
     if (post) {
+      page.subSubPostsLoading = false;
       console.log('getting sub posts');
       await getSubPosts(post.subPosts);
     }
+    return function cleanup() {
+      console.log('cleaned up');
+    };
   }, post);
 
   useEffect(async () => {
     console.log(page.subPosts);
+    console.log(page.subPostsLoading);
     if (post && page.subPosts.length === post.subPosts.length) {
       console.log('getting sub sub posts');
       await getSubSubPosts(page.subPosts);
     }
+    return function cleanup() {
+      console.log('cleaned up');
+    };
   }, [page.subPosts]);
 
   const getPostById = async (postId) => {
@@ -48,13 +78,13 @@ const PostPage = ({ page, getSubPosts, getSubSubPosts, setAlert, match }) => {
 
   return (
     <Fragment>
-      {page.subPostsLoading && page.subSubPostsLoading ? (
+      {page.subPostsLoading ? (
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
           <div class="flex flex-col w-4/5">
             <DetailedPost
-              postId={post._id}
+              postId={match.params.post_id}
               title={post.title}
               description={post.description}
               avatar={post.avatar}
@@ -116,6 +146,7 @@ const PostPage = ({ page, getSubPosts, getSubSubPosts, setAlert, match }) => {
 PostPage.propTypes = {
   getSubPosts: PropTypes.func.isRequired,
   getSubSubPosts: PropTypes.func.isRequired,
+  cleanUp: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
@@ -130,6 +161,7 @@ export default connect(mapStateToProps, {
   setAlert,
   getSubPosts,
   getSubSubPosts,
+  cleanUp,
 })(PostPage);
 
 // subSubPosts.map((subSubPost, subIndex) => {

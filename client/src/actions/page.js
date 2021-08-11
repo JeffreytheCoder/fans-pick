@@ -10,6 +10,7 @@ import {
   GET_SUBPOST,
   SUBPOST_ERROR,
   GET_SUBSUBPOST,
+  CLEANUP,
 } from './types';
 
 export const getPageById = (pageId) => async (dispatch) => {
@@ -117,3 +118,13 @@ export const getPostByPageId =
       // });
     }
   };
+
+export const cleanUp = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: CLEANUP,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};

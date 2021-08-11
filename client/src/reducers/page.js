@@ -8,13 +8,17 @@ import {
   GET_SUBPOST,
   SUBPOST_ERROR,
   GET_SUBSUBPOST,
+  CLEANUP,
 } from '../actions/types';
 
 const initialState = {
+  // page
   page: null,
   posts: [],
   pageLoading: true,
   postsLoading: true,
+
+  // post page
   subPostsLoading: true,
   subSubPostsLoading: true,
   subPosts: [],
@@ -78,6 +82,15 @@ export default function (state = initialState, action) {
         ...state,
         posts: [],
         postsLoading: false,
+      };
+
+    case CLEANUP:
+      return {
+        ...state,
+        subPosts: [],
+        subSubPosts: [],
+        subPostsLoading: true,
+        subSubPostsLoading: true,
       };
 
     default:

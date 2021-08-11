@@ -21,3 +21,4 @@ export const PAGE_POSTS_ERROR = 'PAGE_POSTS_ERROR';
 export const GET_SUBPOST = 'GET_SUBPOST';
 export const GET_SUBSUBPOST = 'GET_SUBSUBPOST';
 export const SUBPOST_ERROR = 'SUBPOST_ERROR';
+export const CLEANUP = 'CLEANUP';
