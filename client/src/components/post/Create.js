@@ -24,10 +24,10 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
   };
 
   const onSubmit = async (e) => {
+    e.preventDefault();
     if (!formData.section) {
       setAlert('Please select a section', 'danger');
     } else {
-      e.preventDefault();
       console.log(formData);
 
       const config = {
@@ -39,7 +39,10 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
       try {
         const res = await axios.post('/api/posts/create', body, config);
         console.log(res.data);
-        setAlert('Post created!', 'success');
+        setTimeout(() => {
+          setAlert('Post created!', 'success');
+        }, 3000);
+        window.location.reload();
       } catch (err) {
         console.error(err);
       }

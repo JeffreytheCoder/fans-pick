@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,6 +7,12 @@ import { Link } from 'react-router-dom';
 
 import Upvote from './Upvote';
 import { setAlert } from '../../actions/alert';
+// import useForceUpdate from '../hooks/useForceUpdate';
+
+const useForceUpdate = () => {
+  const [value, setValue] = useState(0); // integer state
+  return () => setValue((value) => value + 1); // update the state to force render
+};
 
 const DetailedPost = ({
   postId,
@@ -25,7 +31,7 @@ const DetailedPost = ({
   isSubSubPost = false,
 }) => {
   const [showReply, setShowReply] = useState(false);
-  const replyRef = useRef('');
+  const [reply, setReply] = useState('');
 
   const isPageOwner = () => {
     auth.user.pages.forEach((page) => {
@@ -44,13 +50,43 @@ const DetailedPost = ({
     }
   };
 
+  const createReply = async (e) => {
+    e.preventDefault();
+    console.log(reply);
+    if (!reply) {
+      setAlert('Reply cannot be empty!', 'danger');
+    } else {
+      const config = {
+        headers: { 'Content-Type': 'application/json' },
+      };
+      const body = JSON.stringify({
+        page_id: page.page._id,
+        section: 'subposts',
+        description: reply,
+        superpost_id: postId,
+      });
+      console.log(body);
+
+      try {
+        const res = await axios.post('/api/posts/create', body, config);
+        console.log(res.data);
+        setTimeout(() => {
+          setAlert('Reply created!', 'success');
+        }, 3000);
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   return (
     <Fragment>
       <div class="flex flex-col mb-2">
         <div
           class={`flex flex-row font-main relative border-2 rounded ${
-            title ? 'mt-12' : ''
-          } ${isSubSubPost ? 'ml-12' : ''} mb-4 px-8 pt-8`}
+            isSubSubPost ? 'ml-12' : ''
+          } mb-4 px-8 pt-8`}
         >
           <div class="mr-6">
             <Upvote postId={postId} upvotes={upvotes} downvotes={downvotes} />
@@ -72,7 +108,7 @@ const DetailedPost = ({
                 </button>
               </div>
 
-              <div class={`"flex mr-2" ${title ? '' : 'hidden'}`}>
+              {/* <div class={`"flex mr-2" ${title ? '' : 'hidden'}`}>
                 <Link to={`/page/${page.page._id}`}>
                   <div class="flex flex-row items-center mr-4">
                     <img
@@ -85,7 +121,7 @@ const DetailedPost = ({
                     </span>
                   </div>
                 </Link>
-              </div>
+              </div> */}
 
               <div class="flex">
                 <span>{moment(date).fromNow()}</span>
@@ -226,11 +262,7 @@ const DetailedPost = ({
           ></input>
         </div> */}
         </div>
-        <div
-          class={`flex flex-row w-full items-center ${
-            showReply ? '' : 'hidden'
-          }`}
-        >
+        <div>
           <form
             class={`flex flex-row w-full items-center mb-4 text-lg ${
               showReply ? '' : 'hidden'
@@ -240,10 +272,14 @@ const DetailedPost = ({
               <input
                 className="w-full appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder={`Reply to ${username}...`}
-                ref={replyRef}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
               ></input>
             </div>
-            <button className="flex-none font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition">
+            <button
+              onClick={createReply}
+              className="flex-none font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition"
+            >
               Reply
             </button>
           </form>

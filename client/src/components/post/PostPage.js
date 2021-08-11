@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
@@ -70,11 +71,35 @@ const PostPage = ({
 
   return (
     <Fragment>
-      {page.subPostsLoading ? (
+      {page.pageLoading && page.subPostsLoading ? (
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
-          <div class="flex flex-col w-4/5">
+          <div class="flex flex-col w-4/5 mt-10">
+            <div class="flex mr-2">
+              <Link to={`/page/${page.page._id}`}>
+                <div class="flex flex-row items-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <img
+                    class="h-8 w-8 mr-2 rounded-full ml-2"
+                    src={page.page.avatar}
+                    alt={page.page.name}
+                  ></img>
+                  <span class="text-lg font-semibold">{page.page.name}</span>
+                </div>
+              </Link>
+            </div>
             <DetailedPost
               postId={match.params.post_id}
               title={post.title}
