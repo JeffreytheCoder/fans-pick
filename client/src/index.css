@@ -16,7 +16,7 @@
   }
 
   .hover-transition {
-    @apply transition duration-200 ease-out;
+    @apply transition duration-200 ease-out cursor-pointer;
   }
 }
 

@@ -6,6 +6,7 @@ import { Transition } from '@headlessui/react';
 
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
+import CreatePost from '../post/Create';
 import { getPageById, getPostByPageId } from '../../actions/page';
 import { setAlert } from '../../actions/alert';
 
@@ -136,24 +137,26 @@ const Page = ({
                 </span>
               </button>
               {page.page.sections.map((sec, index) => {
-                return (
-                  <button
-                    onClick={() => {
-                      setSection(sec.name);
-                    }}
-                  >
-                    <span
-                      key="index"
-                      class={`text-xl px-4 py-2 rounded mr-4 capitalize ${
-                        sec.name === section
-                          ? 'bg-gray-400 text-black font-bold'
-                          : 'bg-gray-200 text-gray-600 font-semibold hover:bg-gray-400 hover:text-gray-800 hover:font-bold hover-transition'
-                      }`}
+                if (sec.name !== 'subposts') {
+                  return (
+                    <button
+                      onClick={() => {
+                        setSection(sec.name);
+                      }}
                     >
-                      {sec.name}
-                    </span>
-                  </button>
-                );
+                      <span
+                        key="index"
+                        class={`text-xl px-4 py-2 rounded mr-4 capitalize ${
+                          sec.name === section
+                            ? 'bg-gray-400 text-black font-bold'
+                            : 'bg-gray-200 text-gray-600 font-semibold hover:bg-gray-400 hover:text-gray-800 hover:font-bold hover-transition'
+                        }`}
+                      >
+                        {sec.name}
+                      </span>
+                    </button>
+                  );
+                }
               })}
             </div>
             <div class="flex flex-row items-center">
@@ -315,9 +318,10 @@ const Page = ({
                 </Transition>
               </div>
 
-              <button class="inline-block text-xl font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition">
-                New Post
-              </button>
+              <CreatePost
+                pageId={page.page._id}
+                sections={page.page.sections}
+              />
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import Login from './components/auth/Login';
 import Alert from './components/global/Alert';
 import Page from './components/page/Page';
 import PostPage from './components/post/PostPage';
+import CreatePost from './components/post/Create';
 
 // redux
 import { Provider } from 'react-redux';
@@ -42,6 +43,11 @@ const App = () => {
           <Route exact path="/login" component={Login} />
           <PrivateRoute exact path="/page/:page_id" component={Page} />
           <PrivateRoute exact path="/post/:post_id" component={PostPage} />
+          {/* <PrivateRoute
+            exact
+            path="/post/:post_id/create"
+            component={CreatePost}
+          /> */}
           {/* <Route exact path="/create-page" component={CreatePage} /> */}
           {/* <Route exact path='/my-pages' component={MyPages} />
           <Route exact path='/following' component={Following} />
