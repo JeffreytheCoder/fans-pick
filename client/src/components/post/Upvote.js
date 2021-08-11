@@ -59,7 +59,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
   }, [downvotes, auth]);
 
   return (
-    <div class="flex flex-col items-center mr-8">
+    <div class="flex flex-col items-center">
       <button onClick={() => upvotePost()}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

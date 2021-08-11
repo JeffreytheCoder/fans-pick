@@ -87,6 +87,10 @@ export default function (state = initialState, action) {
     case CLEANUP:
       return {
         ...state,
+        page: null,
+        posts: [],
+        pageLoading: true,
+        postsLoading: true,
         subPosts: [],
         subSubPosts: [],
         subPostsLoading: true,

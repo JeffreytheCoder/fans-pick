@@ -16,10 +16,6 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
   const cancelButtonRef = useRef(null);
   const [filterClicked, setFilterClicked] = useState(false);
 
-  useEffect(() => {
-    console.log(formData);
-  }, formData);
-
   const onChange = (e) => {
     setFormData({
       ...formData,

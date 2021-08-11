@@ -5,7 +5,12 @@ import axios from 'axios';
 
 import Spinner from '../global/Spinner';
 import { setAlert } from '../../actions/alert';
-import { getSubPosts, getSubSubPosts, cleanUp } from '../../actions/page';
+import {
+  getSubPosts,
+  getSubSubPosts,
+  cleanUp,
+  getPageById,
+} from '../../actions/page';
 import DetailedPost from './DetailedPost';
 
 const subpostReducer = (state, action) => {
@@ -19,6 +24,7 @@ const PostPage = ({
   page,
   getSubPosts,
   getSubSubPosts,
+  getPageById,
   cleanUp,
   setAlert,
   match,
@@ -26,45 +32,31 @@ const PostPage = ({
   const [post, setPost] = useState(null);
 
   useEffect(() => {
-    console.log('rendered');
     return function cleanup() {
-      console.log('cleaned up');
-      // page.post = null;
-      // page.subPosts = [];
-      // page.subPostsLoading = true;
+      console.log('post page cleaned up');
       cleanUp();
     };
   }, []);
 
   useEffect(async () => {
     await getPostById(match.params.post_id);
-    return function cleanup() {
-      console.log('cleaned up');
-    };
   }, [match.params.post_id]);
 
   useEffect(async () => {
     console.log(post);
     if (post) {
-      page.subSubPostsLoading = false;
-      console.log('getting sub posts');
+      console.log('getting sub posts and page');
+      await getPageById(post.page);
       await getSubPosts(post.subPosts);
     }
-    return function cleanup() {
-      console.log('cleaned up');
-    };
   }, post);
 
   useEffect(async () => {
     console.log(page.subPosts);
-    console.log(page.subPostsLoading);
     if (post && page.subPosts.length === post.subPosts.length) {
       console.log('getting sub sub posts');
       await getSubSubPosts(page.subPosts);
     }
-    return function cleanup() {
-      console.log('cleaned up');
-    };
   }, [page.subPosts]);
 
   const getPostById = async (postId) => {
@@ -146,6 +138,7 @@ const PostPage = ({
 PostPage.propTypes = {
   getSubPosts: PropTypes.func.isRequired,
   getSubSubPosts: PropTypes.func.isRequired,
+  getPageById: PropTypes.func.isRequired,
   cleanUp: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
@@ -161,6 +154,7 @@ export default connect(mapStateToProps, {
   setAlert,
   getSubPosts,
   getSubSubPosts,
+  getPageById,
   cleanUp,
 })(PostPage);
 

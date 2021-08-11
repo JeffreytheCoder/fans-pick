@@ -7,7 +7,7 @@ import { Transition } from '@headlessui/react';
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
 import CreatePost from '../post/Create';
-import { getPageById, getPostByPageId } from '../../actions/page';
+import { getPageById, getPostByPageId, cleanUp } from '../../actions/page';
 import { setAlert } from '../../actions/alert';
 
 const Page = ({
@@ -17,12 +17,20 @@ const Page = ({
   auth,
   match,
   setAlert,
+  cleanUp,
 }) => {
   const [section, setSection] = useState('');
   const [sorting, setSorting] = useState('date');
   const [order, setOrder] = useState('desc');
   const [filterClicked, setFilterClicked] = useState(false);
   const [followed, setFollowed] = useState(false);
+
+  useEffect(() => {
+    return function cleanup() {
+      console.log('page cleaned up');
+      cleanUp();
+    };
+  }, []);
 
   useEffect(async () => {
     await getPageById(match.params.page_id);
@@ -340,6 +348,7 @@ const Page = ({
                     avatar,
                     username,
                     likes,
+                    unlikes,
                     subPosts,
                     adopted,
                     date,
@@ -355,7 +364,8 @@ const Page = ({
                       description={description}
                       avatar={avatar}
                       username={username}
-                      upvotes={likes.length}
+                      upvotes={likes}
+                      downvotes={unlikes}
                       subPosts={subPosts.length}
                       adopted={adopted}
                       date={date}
@@ -376,6 +386,7 @@ Page.propTypes = {
   getPageById: PropTypes.func.isRequired,
   getPostByPageId: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
+  cleanUp: PropTypes.func.isRequired,
   page: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
 };
@@ -389,4 +400,5 @@ export default connect(mapStateToProps, {
   getPageById,
   getPostByPageId,
   setAlert,
+  cleanUp,
 })(Page);
