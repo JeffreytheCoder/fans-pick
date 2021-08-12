@@ -270,7 +270,7 @@ const DetailedPost = ({
           >
             <div class="flex-grow mr-4">
               <input
-                className="w-full appearance-none border rounded py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="w-full appearance-none border rounded py-3 px-4 text-gray-700 leading-tight input-outline"
                 placeholder={`Reply to ${username}...`}
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}

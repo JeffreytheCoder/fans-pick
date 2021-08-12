@@ -16,7 +16,11 @@
   }
 
   .hover-transition {
-    @apply transition duration-200 ease-out cursor-pointer;
+    @apply transition duration-200 ease-out;
+  }
+
+  .input-outline {
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-green-400;
   }
 }
 

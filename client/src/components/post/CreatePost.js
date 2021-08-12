@@ -201,7 +201,7 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
                           </Transition>
                         </div>
                         <input
-                          className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight input-outline hover-transition"
                           id="title"
                           name="title"
                           type="text"
@@ -211,7 +211,7 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
                         />
                       </div>
                       <textarea
-                        className="leading-loose appearance-none border rounded h-32 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="leading-loose appearance-none border rounded h-32 w-full py-2 px-3 text-gray-700 leading-tight input-outline hover-transition"
                         id="description"
                         name="description"
                         type="text"

@@ -6,7 +6,7 @@ import { Transition } from '@headlessui/react';
 
 import Post from '../post/Post';
 import Spinner from '../global/Spinner';
-import CreatePost from '../post/Create';
+import CreatePost from '../post/CreatePost';
 import { getPageById, getPostByPageId, cleanUp } from '../../actions/page';
 import { setAlert } from '../../actions/alert';
 
