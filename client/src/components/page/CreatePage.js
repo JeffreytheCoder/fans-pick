@@ -77,12 +77,14 @@ function CreatePage() {
           <input
             class="appearance-none border rounded w-full py-2 px-3 text-gray-700 input-outline hover-transition mb-6"
             placeholder="Name of your channel..."
+            required
           />
 
           <label className="block text-gray-700 font-bold mb-1">Page bio</label>
           <input
             class="appearance-none border rounded w-full py-2 px-3 text-gray-700 input-outline hover-transition mb-6"
             placeholder="Describe your channel..."
+            required
           />
 
           <label className="block text-gray-700 font-bold mb-1">
@@ -152,6 +154,7 @@ function CreatePage() {
                     </div>
                   </div>
                 </div>
+
                 <div class="shadow bg-white z-40 w-full rounded max-h-select overflow-y-auto svelte-5uyqqj">
                   <div class="flex flex-col w-full">
                     {SECTION_CHOICES.map((choice) => {
