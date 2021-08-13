@@ -85,15 +85,15 @@ const DetailedPost = ({
       <div class="flex flex-col mb-2">
         <div
           class={`flex flex-row font-main relative border-2 rounded ${
-            isSubSubPost ? 'ml-12' : ''
-          } mb-4 px-8 pt-8`}
+            isSubSubPost ? 'ml-4 md:ml-8 lg:ml-12' : ''
+          } mb-2 md:mb-4 px-4 md:px-8 pt-4 md:pt-8`}
         >
-          <div class="mr-6">
+          <div class="mr-3 md:mr-6">
             <Upvote postId={postId} upvotes={upvotes} downvotes={downvotes} />
           </div>
           <div class="flex flex-col">
-            <div class="flex flex-row items-center mb-4 text-lg flex-wrap">
-              <div class="flex mr-6">
+            <div class="flex flex-row items-center mb-2 md:mb-4 lg:text-lg flex-wrap">
+              <div class="flex md:mr-3 mr-6">
                 <button>
                   <div class="flex flex-row items-center">
                     <img
@@ -127,18 +127,24 @@ const DetailedPost = ({
                 <span>{moment(date).fromNow()}</span>
               </div>
             </div>
-            <div class={`text-3xl font-bold mb-4 ${title ? '' : 'hidden'}`}>
+            <div
+              class={`text-xl md:text-2xl lg:text-3xl font-bold mb-2 md:mb-4 ${
+                title ? '' : 'hidden'
+              }`}
+            >
               {title}
             </div>
 
             <div
-              class={`flex text-xl leading-relaxed ${title ? 'mb-2' : 'mb-8'}`}
+              class={`flex flex-wrap md:text-lg lg:text-xl leading-relaxed ${
+                title ? 'mb-2' : 'mb-4 md:mb-8'
+              }`}
             >
               {description}
             </div>
 
-            <div class="flex flex-row -ml-4 text-lg">
-              {title && isPageOwner ? (
+            <div class="flex flex-row -ml-4 md:text-lg">
+              {/* {title && isPageOwner ? (
                 adopted ? (
                   <button class="z-10">
                     <div class="flex flex-row items-center justify-center mr-4">
@@ -202,15 +208,15 @@ const DetailedPost = ({
                 </div>
               ) : (
                 <div></div>
-              )}
+              )} */}
               <div
-                class={`flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
+                class={`flex flex-row items-center p-2 md:p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
                   title ? '' : 'hidden'
                 }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-7 w-7"
+                  className="h-6 w-6 md:h-7 md:w-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -227,13 +233,13 @@ const DetailedPost = ({
                 </button>
               </div>
               <div
-                class={`flex flex-row items-center p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
+                class={`flex flex-row items-center p-2 md:p-4 hover:bg-gray-200 hover-transition rounded font-semibold ${
                   title ? '' : 'hidden'
                 }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-6 w-6 md:h-7 md:w-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

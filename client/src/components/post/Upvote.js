@@ -66,7 +66,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          class={`h-7 w-7 ${
+          class={`h-6 w-6 md:h-7 md:w-7 ${
             upvoted
               ? 'font-bold text-green-500'
               : 'hover:text-green-500 hover-transition'
@@ -80,10 +80,11 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
           />
         </svg>
       </button>
-      <span class="font-semibold text-lg">
-        {upvotes && downvotes
+      <span class="font-semibold md:text-lg">
+        {/* {upvotes && downvotes
           ? upvotes.length - downvotes.length + upvoteChange
-          : upvoteChange}
+          : upvoteChange} */}
+        53
       </span>
       <button onClick={() => downvotePost()}>
         <svg
@@ -91,7 +92,7 @@ const Upvote = ({ postId, upvotes, downvotes, auth, setAlert }) => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          class={`h-7 w-7 ${
+          class={`h-6 h-6 md:h-7 md:w-7 ${
             downvoted
               ? 'font-bold text-purple-600'
               : 'hover:text-purple-600 hover-transition'

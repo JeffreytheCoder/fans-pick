@@ -53,9 +53,15 @@ const CreatePost = ({ pageId, sections, auth, setAlert }) => {
     <Fragment>
       <button
         onClick={() => setOpen(true)}
-        class="inline-block text-xl font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition"
+        class="md:hidden inline-block text-xl font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition"
       >
-        New Post
+        + New
+      </button>
+      <button
+        onClick={() => setOpen(true)}
+        class="hidden md:inline-block text-xl font-semibold px-4 py-3 leading-none rounded-md border-2 border-white text-white bg-green-500 hover:bg-white hover:border-2 hover:text-green-500 hover:border-green-500 hover-transition"
+      >
+        + New Post
       </button>
       <Transition.Root show={open} as={Fragment}>
         <Dialog

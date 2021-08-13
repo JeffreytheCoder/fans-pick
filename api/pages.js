@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const auth = require('../middleware/auth');
 const normalize = require('normalize-url');
 
 const Page = require('../models/Page');
+const Image = require('../models/Image');
+const auth = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 // @route    POST api/pages/create
 // @desc     current user create a page
@@ -14,7 +16,7 @@ router.post(
   auth,
   check('name', 'Page name is required').not().isEmpty(),
   check('bio', 'Page bio is required').not().isEmpty(),
-  check('avatar', 'Page avatar is required').not().isEmpty(),
+  check('avatar', 'Avatar is required').not().isEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -31,6 +33,13 @@ router.post(
           links[key] = normalize(value, { forceHttps: true });
         }
       }
+
+      // await upload(req, res);
+      // save avatar
+      // const avatarImage = new Image();
+      // avatarImage.img.data = fs.readFileSync(req.files.userPhoto.path);
+      // avatarImage.img.contentType = 'image/png';
+      // avatarImage.save();
 
       // save page
       const page = new Page({

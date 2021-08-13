@@ -48,12 +48,12 @@ const Post = ({
   // });
 
   return (
-    <div class="font-main rounded-lg h-30 w-4/5 border-2 p-6 relative mb-7">
+    <div class="font-main rounded-lg h-30 w-11/12 md:w-4/5 lg:3/4 border-2 p-6 relative mb-4 md:mb-7">
       <div class="relative flex flex-row mr-12 items-center mb-2">
         <Link to={`/post/${postId}`}>
           <div class="text-xl font-bold mr-4"> {title}</div>
         </Link>
-        {isPageOwner ? (
+        {/* {isPageOwner ? (
           adopted ? (
             <button class="z-10">
               <div class="flex flex-row items-center justify-center">
@@ -115,16 +115,21 @@ const Post = ({
           </div>
         ) : (
           <div></div>
-        )}
+        )} */}
       </div>
 
-      <div class="text-lg truncate pb-4 mr-20">{description}</div>
+      <div class="flex flex-row mr-2 md:hidden mb-3">
+        <span>{moment(date).fromNow()}</span>
+      </div>
+      <div class="hidden md:block text-lg truncate mb-4 mr-2">
+        {description}
+      </div>
 
       <div class="relative bottom-0 left-0 flex flex-row items-center flex-wrap">
         <button>
-          <div class="flex flex-row items-center mr-6">
+          <div class="flex flex-row items-center mr-4 md:mr-6">
             <img
-              class="h-8 mr-3 rounded-full"
+              class="h-8 mr-2 rounded-full"
               src={avatar}
               alt={username}
             ></img>
@@ -134,7 +139,7 @@ const Post = ({
           </div>
         </button>
 
-        <div class="flex flex-row mr-6">
+        <div class="flex flex-row mr-2 md:mr-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -149,7 +154,7 @@ const Post = ({
               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
             />
           </svg>
-          <span class="ml-1">{subPosts}</span>
+          <span class="ml-1">8</span>
         </div>
 
         {/* <div class={`flex flex-row ${tags.length > 0 ? 'mr-2' : ''}`}>
@@ -165,7 +170,7 @@ const Post = ({
           })}
         </div> */}
 
-        <div class="flex flex-row mr-6">
+        <div class="flex flex-row mr-2 md:mr-6 hidden md:block">
           <span class="ml-1">{moment(date).fromNow()}</span>
         </div>
       </div>

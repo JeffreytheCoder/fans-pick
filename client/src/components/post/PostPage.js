@@ -75,10 +75,10 @@ const PostPage = ({
         <Spinner />
       ) : (
         <div class="flex justify-center font-main">
-          <div class="flex flex-col w-4/5 mt-10">
+          <div class="flex flex-col w-5/6 md:w-4/5 lg:w-3/4 mt-5 md:mt-10">
             <div class="flex mr-2">
               <Link to={`/page/${page.page._id}`}>
-                <div class="flex flex-row items-center mb-4">
+                <div class="flex flex-row items-center mb-3 md:mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -111,7 +111,7 @@ const PostPage = ({
               adopted={post.adopted}
               date={post.date}
             />
-            <span class="text-xl ml-6 mb-6">
+            <span class="text-lg md:text-xl ml-6 mb-3 md:mb-6">
               {page.subPosts.length == 0
                 ? 'No comments yet, come post the first one!'
                 : `${page.subPosts.length} comments`}
