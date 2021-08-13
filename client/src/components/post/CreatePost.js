@@ -6,7 +6,7 @@ import axios from 'axios';
 
 import { setAlert } from '../../actions/alert';
 
-const Create = ({ pageId, sections, auth, setAlert }) => {
+const CreatePost = ({ pageId, sections, auth, setAlert }) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -240,7 +240,7 @@ const Create = ({ pageId, sections, auth, setAlert }) => {
   );
 };
 
-Create.propTypes = {
+CreatePost.propTypes = {
   auth: PropTypes.object.isRequired,
   setAlert: PropTypes.func.isRequired,
 };
@@ -249,4 +249,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { setAlert })(Create);
+export default connect(mapStateToProps, { setAlert })(CreatePost);

@@ -22,7 +22,33 @@ const PageSchema = new mongoose.Schema({
     type: [String],
   },
   links: {
-    type: [String],
+    facebook: {
+      type: String,
+    },
+    twitter: {
+      type: String,
+    },
+    instagram: {
+      type: String,
+    },
+    youtube: {
+      type: String,
+    },
+    tiktok: {
+      type: String,
+    },
+    pinterest: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
+    },
+    medium: {
+      type: String,
+    },
+    website: {
+      type: String,
+    },
   },
   sections: [
     {
